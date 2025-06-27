@@ -24,7 +24,7 @@ export function Hero() {
   return (
     <section 
       id="hero" 
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-tr from-slate-50 via-blue-50 to-indigo-100 dark:from-black dark:via-zinc-900 dark:to-zinc-700"
     >
       {/* Animated Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px] sm:bg-[size:20px_20px] md:bg-[size:24px_24px] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)]" />
@@ -40,12 +40,12 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="text-6xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight"
           >
-            <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 bg-clip-text text-transparent">
-              Tworzymy
+            <span className="bg-gradient-to-r from-gray-900 via-zinc-700 to-black dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 bg-clip-text text-transparent">
+              Tworzę wyjątkowe
             </span>
             <br />
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-blue-300 dark:to-blue-200 bg-clip-text text-transparent">
-              Cyfrowe Doświadczenia
+              projekty wizualne
             </span>
           </motion.h1>
 
@@ -56,8 +56,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-10 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-2"
           >
-            Profesjonalne strony internetowe, grafika komputerowa i kompleksowe rozwiązania brandingowe. 
-            <span className="text-blue-600 dark:text-blue-300 font-semibold block sm:inline mt-1 sm:mt-0"> Wyróżnij swoją markę</span> w cyfrowym świecie.
+            Specjalizuję się projektowaniu graficznym i tworzeniu stron internetowych.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -96,7 +95,7 @@ export function Hero() {
       </div>
 
       {/* Fade to white/black at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-gray-900 dark:via-gray-900/80 dark:to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-black dark:via-black dark:to-transparent pointer-events-none" />
 
       {/* Scroll Indicator */}
       <motion.div
