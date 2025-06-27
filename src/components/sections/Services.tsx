@@ -2,9 +2,20 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { SERVICES } from '@/lib/constants';
 
 function ServiceCard({ service, className = '' }: { service: typeof SERVICES[0], className?: string }) {
+  // Mapowanie ID usług na nazwy plików obrazków
+  const getImagePath = (serviceId: string) => {
+    const imageMap = {
+      'web-development': '/images/services/webmockup.png',
+      'graphics': '/images/services/logomockup.png', 
+      'administration': '/images/services/adminmockup.png',
+    };
+    return imageMap[serviceId as keyof typeof imageMap] || '/images/services/default.jpg';
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -14,26 +25,19 @@ function ServiceCard({ service, className = '' }: { service: typeof SERVICES[0],
       className={`group relative bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden hover:shadow-lg hover:shadow-gray-200/20 dark:hover:shadow-zinc-900/20 transition-all duration-300 ${className}`}
     >
       {/* Image with fade effect */}
-      <div className={`relative overflow-hidden ${className.includes('lg:col-span-3') ? 'h-48 sm:h-52 lg:h-100' : 'h-48 sm:h-52 lg:h-48'}`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-zinc-800 dark:to-zinc-700" />
-        
-        {/* Simple dot pattern overlay */}
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)`,
-            backgroundSize: '20px 20px'
-          }}
-        />
-        <div 
-          className="absolute inset-0 opacity-30 dark:opacity-20"
-          style={{
-            backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: '20px 20px'
-          }}
+      <div className={`relative overflow-hidden ${className.includes('lg:col-span-3') ? 'h-48 sm:h-52 lg:h-140' : 'h-48 sm:h-52 lg:h-48'}`}>
+        <Image
+          src={getImagePath(service.id)}
+          alt={service.title}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
         
-        {/* Fade gradient overlay */}
+        {/* Overlay gradient for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        
+        {/* Fade gradient overlay at bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-zinc-900 dark:via-zinc-900/80 dark:to-transparent" />
       </div>
 
