@@ -134,3 +134,11 @@ body {
 .animate-pulse-slow {
   animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
