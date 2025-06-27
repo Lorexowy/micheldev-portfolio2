@@ -1,12 +1,21 @@
 // src/components/ui/ThemeToggle.tsx
 'use client';
 
-import { Moon, Sun, Monitor, ChevronDown, Check } from 'lucide-react';
+import { Moon, Sun, Monitor } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { Button } from './Button';
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, mounted } = useTheme();
+
+  // Nie renderuj nic dopóki komponent nie jest zamontowany
+  if (!mounted) {
+    return (
+      <Button variant="ghost" size="sm" disabled>
+        <div className="h-5 w-5" />
+      </Button>
+    );
+  }
 
   const cycleTheme = () => {
     const themes = ['light', 'dark', 'system'] as const;
@@ -26,12 +35,23 @@ export function ThemeToggle() {
     }
   };
 
+  const getLabel = () => {
+    switch (theme) {
+      case 'light':
+        return 'Przełącz na tryb ciemny';
+      case 'dark':
+        return 'Przełącz na tryb systemowy';
+      default:
+        return 'Przełącz na tryb jasny';
+    }
+  };
+
   return (
     <Button
       variant="ghost"
       size="sm"
       onClick={cycleTheme}
-      aria-label="Przełącz motyw"
+      aria-label={getLabel()}
     >
       {getIcon()}
     </Button>
