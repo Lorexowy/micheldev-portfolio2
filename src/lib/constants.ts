@@ -9,32 +9,22 @@ export const NAVIGATION_ITEMS = [
 
 export const SERVICES = [
   {
-    id: 'web-design',
-    title: 'Projektowanie stron',
-    description: 'Nowoczesne, responsywne strony internetowe dostosowane do Twoich potrzeb',
-    icon: 'Monitor',
-    features: ['Responsywny design', 'UX/UI Design', 'Prototypowanie', 'Wireframing']
-  },
-  {
     id: 'web-development',
-    title: 'Programowanie',
-    description: 'Profesjonalne rozwiązania webowe z wykorzystaniem najnowszych technologii',
-    icon: 'Code',
-    features: ['React/Next.js', 'TypeScript', 'Backend API', 'Optymalizacja SEO']
+    title: 'Tworzenie stron internetowych',
+    description: 'Projektowanie i tworzenie nowoczesnych, responsywnych stron internetowych dopasowanych do Twoich potrzeb',
+    icon: 'Monitor' as const
   },
   {
-    id: 'graphics',
+    id: 'graphics', 
     title: 'Grafika komputerowa',
-    description: 'Kreatywne projekty graficzne dla Twojej marki',
-    icon: 'Palette',
-    features: ['Grafiki reklamowe', 'Ilustracje', 'Ikony', 'Materiały promocyjne']
+    description: 'Profesjonalne projekty graficzne, logo i materiały wizualne dla Twojej marki',
+    icon: 'Palette' as const
   },
   {
-    id: 'branding',
-    title: 'Branding',
-    description: 'Kompleksowa identyfikacja wizualna marki',
-    icon: 'Star',
-    features: ['Logo design', 'Książka marki', 'Kolory i typografia', 'Strategia marki']
+    id: 'administration',
+    title: 'Administracja stron',
+    description: 'Opieka techniczna, aktualizacje i utrzymanie istniejących stron internetowych',
+    icon: 'Settings' as const
   }
 ];
 
