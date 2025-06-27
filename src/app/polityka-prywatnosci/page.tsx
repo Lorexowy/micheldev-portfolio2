@@ -6,7 +6,7 @@ export default function PrivacyPolicy() {
   return (
     <main>
       <Navigation />
-      <div className="pt-16 min-h-screen bg-white dark:bg-gray-900">
+      <div className="pt-16 min-h-screen bg-white dark:bg-black">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
             Polityka Prywatności

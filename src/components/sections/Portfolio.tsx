@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export function Portfolio() {
   return (
-    <section id="portfolio" className="py-20 bg-gray-50 dark:bg-gray-800">
+     <section id="portfolio" className="py-20 bg-gray-50 dark:bg-zinc-900">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

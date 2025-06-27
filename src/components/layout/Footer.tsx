@@ -46,7 +46,7 @@ export function Footer() {
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">Informacje</h4>
             <ul className="space-y-2">
-              <li><Link href="/privacy-policy" className="hover:text-blue-400 transition-colors">Polityka prywatności</Link></li>
+              <li><Link href="/polityka-prywatnosci" className="hover:text-blue-400 transition-colors">Polityka prywatności</Link></li>
               <li><Link href="#contact" className="hover:text-blue-400 transition-colors">Kontakt</Link></li>
               <li><Link href="#portfolio" className="hover:text-blue-400 transition-colors">Portfolio</Link></li>
             </ul>
