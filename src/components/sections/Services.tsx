@@ -9,9 +9,9 @@ function ServiceCard({ service, className = '' }: { service: typeof SERVICES[0],
   // Mapowanie ID usług na nazwy plików obrazków
   const getImagePath = (serviceId: string) => {
     const imageMap = {
-      'web-development': '/images/services/webmockup.png',
-      'graphics': '/images/services/logomockup.png', 
-      'administration': '/images/services/adminmockup.png',
+      'web-development': '/images/services/webmockup1.webp',
+      'graphics': '/images/services/webmockup2.webp', 
+      'administration': '/images/services/webmockup3.webp',
     };
     return imageMap[serviceId as keyof typeof imageMap] || '/images/services/default.jpg';
   };
@@ -22,23 +22,23 @@ function ServiceCard({ service, className = '' }: { service: typeof SERVICES[0],
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
       viewport={{ once: true }}
-      className={`group relative bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden hover:shadow-lg hover:shadow-gray-200/20 dark:hover:shadow-zinc-900/20 transition-all duration-300 ${className}`}
+      className={`group relative bg-zinc-100 dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden hover:shadow-lg hover:shadow-gray-200/20 dark:hover:shadow-zinc-900/20 transition-all duration-300 ${className}`}
     >
       {/* Image with fade effect */}
-      <div className={`relative overflow-hidden ${className.includes('lg:col-span-3') ? 'h-48 sm:h-52 lg:h-140' : 'h-48 sm:h-52 lg:h-48'}`}>
+      <div className={`relative overflow-hidden ${className.includes('lg:col-span-') ? 'h-48 sm:h-52 lg:h-170' : 'h-48 sm:h-52 lg:h-64'}`}>
         <Image
           src={getImagePath(service.id)}
           alt={service.title}
           fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          quality={100}
+          className="object-cover"
         />
         
         {/* Overlay gradient for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         
         {/* Fade gradient overlay at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-zinc-900 dark:via-zinc-900/80 dark:to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-zinc-100 via-white/80 to-transparent dark:from-zinc-900 dark:via-zinc-900/80 dark:to-transparent" />
       </div>
 
       {/* Content */}
