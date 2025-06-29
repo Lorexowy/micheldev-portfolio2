@@ -1,7 +1,7 @@
 // src/components/sections/Process.tsx
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MessageCircle, 
@@ -17,16 +17,24 @@ import {
   Search,
   Lightbulb,
   Palette,
-  Monitor
+  Monitor,
+  Clock,
+  Users,
+  Zap,
+  Target,
+  Sparkles
 } from 'lucide-react';
 
-// Proces dla stron internetowych
+// Dane procesów
 const WEB_PROCESS_STEPS = [
   {
     id: 'web-consultation',
     title: 'Konsultacja',
+    subtitle: 'Poznajemy Twoje potrzeby',
     description: 'Poznajemy Twoje potrzeby biznesowe i cele strony',
     icon: MessageCircle,
+    duration: '1-2 dni',
+    color: 'from-blue-500 to-cyan-500',
     actions: [
       'Analiza wymagań funkcjonalnych',
       'Określenie grupy docelowej',
@@ -44,8 +52,11 @@ const WEB_PROCESS_STEPS = [
   {
     id: 'web-planning',
     title: 'Planowanie',
+    subtitle: 'Tworzymy architekturę',
     description: 'Tworzymy architekturę i strukturę strony',
     icon: FileText,
+    duration: '2-3 dni',
+    color: 'from-purple-500 to-pink-500',
     actions: [
       'Architektura informacji',
       'Mapa strony (sitemap)',
@@ -62,9 +73,12 @@ const WEB_PROCESS_STEPS = [
   },
   {
     id: 'web-design',
-    title: 'Projektowanie UI/UX',
+    title: 'Projektowanie',
+    subtitle: 'Tworzymy design',
     description: 'Projektujemy interfejs i doświadczenie użytkownika',
     icon: Paintbrush,
+    duration: '5-7 dni',
+    color: 'from-green-500 to-emerald-500',
     actions: [
       'Projektowanie UI/UX',
       'Prototypy interaktywne',
@@ -82,8 +96,11 @@ const WEB_PROCESS_STEPS = [
   {
     id: 'web-development',
     title: 'Programowanie',
+    subtitle: 'Kodujemy rozwiązanie',
     description: 'Kodujemy i implementujemy funkcjonalności',
     icon: Code2,
+    duration: '7-14 dni',
+    color: 'from-orange-500 to-red-500',
     actions: [
       'Kodowanie frontend',
       'Integracja z CMS/backend',
@@ -101,8 +118,11 @@ const WEB_PROCESS_STEPS = [
   {
     id: 'web-launch',
     title: 'Wdrożenie',
+    subtitle: 'Uruchamiamy projekt',
     description: 'Uruchamiamy stronę i przekazujemy projekt',
     icon: CheckCircle,
+    duration: '2-3 dni',
+    color: 'from-indigo-500 to-purple-500',
     actions: [
       'Testy końcowe',
       'Optymalizacja SEO',
@@ -119,13 +139,15 @@ const WEB_PROCESS_STEPS = [
   }
 ];
 
-// Proces dla grafiki/brandingu
 const GRAPHICS_PROCESS_STEPS = [
   {
     id: 'graphics-consultation',
     title: 'Konsultacja',
+    subtitle: 'Poznajemy Twoją markę',
     description: 'Poznajemy Twoją markę i wizję graficzną',
     icon: MessageCircle,
+    duration: '1 dzień',
+    color: 'from-green-500 to-teal-500',
     actions: [
       'Analiza potrzeb graficznych',
       'Określenie stylu marki',
@@ -143,8 +165,11 @@ const GRAPHICS_PROCESS_STEPS = [
   {
     id: 'graphics-research',
     title: 'Research',
+    subtitle: 'Badamy i inspirujemy się',
     description: 'Badamy markę, konkurencję i trendy wizualne',
     icon: Search,
+    duration: '1-2 dni',
+    color: 'from-yellow-500 to-orange-500',
     actions: [
       'Analiza tożsamości marki',
       'Research konkurencji',
@@ -162,8 +187,11 @@ const GRAPHICS_PROCESS_STEPS = [
   {
     id: 'graphics-concepts',
     title: 'Koncepcje',
+    subtitle: 'Tworzymy pierwsze pomysły',
     description: 'Tworzymy pierwsze szkice i propozycje',
     icon: Lightbulb,
+    duration: '3-5 dni',
+    color: 'from-purple-500 to-indigo-500',
     actions: [
       'Szkice wstępne',
       'Eksploracja koncepcji',
@@ -181,8 +209,11 @@ const GRAPHICS_PROCESS_STEPS = [
   {
     id: 'graphics-refinement',
     title: 'Finalizacja',
+    subtitle: 'Dopracowujemy do perfekcji',
     description: 'Dopracowujemy wybraną koncepcję do perfekcji',
     icon: Palette,
+    duration: '3-4 dni',
+    color: 'from-pink-500 to-rose-500',
     actions: [
       'Dopracowanie wybranej koncepcji',
       'Tworzenie wariantów',
@@ -200,8 +231,11 @@ const GRAPHICS_PROCESS_STEPS = [
   {
     id: 'graphics-delivery',
     title: 'Wdrożenie',
+    subtitle: 'Przekazujemy materiały',
     description: 'Przekazujemy gotowe materiały i wsparcie',
     icon: CheckCircle,
+    duration: '1-2 dni',
+    color: 'from-emerald-500 to-green-500',
     actions: [
       'Przygotowanie plików do druku',
       'Eksport w różnych formatach',
@@ -218,150 +252,225 @@ const GRAPHICS_PROCESS_STEPS = [
   }
 ];
 
-interface StepDetailProps {
+interface StepCardProps {
   step: typeof WEB_PROCESS_STEPS[0];
-  isExpanded: boolean;
-  onToggle: () => void;
-  colorScheme: 'web' | 'graphics';
+  index: number;
+  isActive: boolean;
+  onClick: () => void;
+  isLast: boolean;
 }
 
-function StepDetail({ step, isExpanded, onToggle, colorScheme }: StepDetailProps) {
+function ModernStepCard({ step, index, isActive, onClick, isLast }: StepCardProps) {
   const IconComponent = step.icon;
-  
-  const colors = {
-    web: {
-      icon: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
-      iconHover: 'group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50',
-      titleHover: 'group-hover:text-blue-600 dark:group-hover:text-blue-400',
-      borderHover: 'hover:border-blue-300 dark:hover:border-blue-700',
-      expandIcon: 'group-hover:text-blue-500',
-      shadowHover: 'hover:shadow-blue-500/10',
-      actionDot: 'bg-blue-500',
-      actionText: 'text-blue-700 dark:text-blue-300',
-      actionBg: 'bg-blue-100 dark:bg-blue-900/30',
-      deliverableDot: 'bg-purple-500'
-    },
-    graphics: {
-      icon: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
-      iconHover: 'group-hover:bg-green-200 dark:group-hover:bg-green-900/50',
-      titleHover: 'group-hover:text-green-600 dark:group-hover:text-green-400',
-      borderHover: 'hover:border-green-300 dark:hover:border-green-700',
-      expandIcon: 'group-hover:text-green-500',
-      shadowHover: 'hover:shadow-green-500/10',
-      actionDot: 'bg-green-500',
-      actionText: 'text-orange-700 dark:text-orange-300',
-      actionBg: 'bg-orange-100 dark:bg-orange-900/30',
-      deliverableDot: 'bg-orange-500'
-    }
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setMousePosition({ x, y });
   };
 
-  const scheme = colors[colorScheme];
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
   
   return (
-    <motion.div layout className="relative">
-      {/* Main Step Card */}
+    <motion.div
+      className="relative"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+    >
+      {/* Connection Line */}
+      {!isLast && (
+        <div className="absolute left-8 top-16 w-0.5 h-24 bg-gradient-to-b from-gray-300 to-gray-200 dark:from-gray-600 dark:to-gray-700 z-0" />
+      )}
+      
+      {/* Card */}
       <motion.div
-        layout
-        onClick={onToggle}
-        className={`group cursor-pointer bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 p-6 ${scheme.borderHover} transition-all duration-300 hover:shadow-lg ${scheme.shadowHover}`}
+        onClick={onClick}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className={`relative cursor-pointer group overflow-hidden ${
+          isActive ? 'z-20' : 'z-10'
+        }`}
       >
-        <div className="flex items-start justify-between">
-          <div className="flex items-start space-x-4 flex-1">
-            {/* Icon */}
-            <div className={`flex-shrink-0 w-12 h-12 ${scheme.icon} rounded-lg flex items-center justify-center ${scheme.iconHover} transition-colors duration-300`}>
-              <IconComponent className="w-6 h-6" />
-            </div>
-            
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <h3 className={`text-lg font-semibold text-gray-900 dark:text-white mb-2 ${scheme.titleHover} transition-colors duration-300`}>
-                {step.title}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                {step.description}
-              </p>
+        <div className={`relative bg-white dark:bg-zinc-900 rounded-2xl border-2 transition-all duration-300 overflow-hidden ${
+          isActive 
+            ? 'border-blue-500 dark:border-blue-400 shadow-xl shadow-blue-500/20' 
+            : 'border-gray-200 dark:border-zinc-700 hover:shadow-lg'
+        }`}>
+          
+          {/* Border Highlight - tylko ramka, bardziej wyrazista, z długim zanikaniem */}
+          {isHovered && !isActive && (
+            <div
+              className="absolute inset-0 rounded-2xl pointer-events-none transition-all duration-500 ease-out"
+              style={{
+                background: `radial-gradient(1000px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.8), transparent 25%)`,
+                mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                maskComposite: 'xor',
+                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                WebkitMaskComposite: 'xor',
+                padding: '2px',
+                borderRadius: '1rem',
+              }}
+            />
+          )}
+          
+          <div className="relative p-6 z-10">
+            <div className="flex items-start space-x-4">
+              {/* Icon bez tła */}
+              <div className={`relative flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center`}>
+                <IconComponent className="w-10 h-10 text-gray-700 dark:text-gray-300" />
+                
+                {/* Step Number */}
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-700 rounded-full flex items-center justify-center">
+                  <span className="text-xs font-bold text-gray-600 dark:text-gray-400">
+                    {index + 1}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className={`text-lg font-semibold transition-colors duration-300 ${
+                    isActive 
+                      ? 'text-blue-600 dark:text-blue-400' 
+                      : 'text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                  }`}>
+                    {step.title}
+                  </h3>
+                  
+                  {/* Duration Badge */}
+                  <div className="flex items-center space-x-1 px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded-full">
+                    <Clock className="w-3 h-3 text-gray-500" />
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                      {step.duration}
+                    </span>
+                  </div>
+                </div>
+                
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+                  {step.subtitle}
+                </p>
+                
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                  {step.description}
+                </p>
+                
+                {/* Expand Indicator */}
+                <div className="flex items-center justify-end mt-3">
+                  <motion.div
+                    animate={{ rotate: isActive ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-gray-400"
+                  >
+                    <ChevronDown className="w-4 h-4" />
+                  </motion.div>
+                </div>
+              </div>
             </div>
           </div>
-          
-          {/* Expand Icon */}
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex-shrink-0 ml-4"
-          >
-            <ChevronDown className={`w-5 h-5 text-gray-400 ${scheme.expandIcon} transition-colors duration-300`} />
-          </motion.div>
         </div>
       </motion.div>
-
+      
       {/* Expanded Details */}
       <AnimatePresence>
-        {isExpanded && (
+        {isActive && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="overflow-hidden"
+            className="overflow-hidden mt-4"
           >
-            <div className="mt-4 bg-gray-50 dark:bg-zinc-800/50 rounded-xl border border-gray-100 dark:border-zinc-700/50 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-r from-gray-50 to-blue-50/50 dark:from-zinc-800/50 dark:to-blue-900/10 rounded-xl border border-gray-200 dark:border-zinc-700 p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Actions */}
                 <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <CheckSquare className={`w-4 h-4 ${scheme.actionDot === 'bg-blue-500' ? 'text-green-500' : 'text-green-500'}`} />
-                    <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                      <CheckSquare className="w-4 h-4 text-green-600 dark:text-green-400" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
                       Działania
                     </h4>
                   </div>
                   <ul className="space-y-2">
-                    {step.actions.map((action, index) => (
-                      <li key={index} className="flex items-start space-x-2">
-                        <div className={`w-1.5 h-1.5 ${scheme.actionDot} rounded-full mt-2 flex-shrink-0`} />
+                    {step.actions.map((action, i) => (
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="flex items-start space-x-2"
+                      >
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0" />
                         <span className="text-sm text-gray-600 dark:text-gray-400">
                           {action}
                         </span>
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
                 </div>
 
                 {/* Tools */}
                 <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Wrench className="w-4 h-4 text-blue-500" />
-                    <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                      <Wrench className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
                       Narzędzia
                     </h4>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {step.tools.map((tool, index) => (
-                      <span
-                        key={index}
-                        className={`px-2 py-1 ${scheme.actionBg} ${scheme.actionText} rounded-md text-xs font-medium`}
+                    {step.tools.map((tool, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium"
                       >
                         {tool}
-                      </span>
+                      </motion.span>
                     ))}
                   </div>
                 </div>
 
                 {/* Deliverables */}
                 <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Package className="w-4 h-4 text-purple-500" />
-                    <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                      <Package className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
                       Rezultaty
                     </h4>
                   </div>
                   <ul className="space-y-2">
-                    {step.deliverables.map((deliverable, index) => (
-                      <li key={index} className="flex items-start space-x-2">
-                        <div className={`w-1.5 h-1.5 ${scheme.deliverableDot} rounded-full mt-2 flex-shrink-0`} />
+                    {step.deliverables.map((deliverable, i) => (
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="flex items-start space-x-2"
+                      >
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0" />
                         <span className="text-sm text-gray-600 dark:text-gray-400">
                           {deliverable}
                         </span>
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
                 </div>
@@ -378,18 +487,12 @@ interface ProcessColumnProps {
   title: string;
   subtitle: string;
   steps: typeof WEB_PROCESS_STEPS;
-  colorScheme: 'web' | 'graphics';
-  expandedStep: string | null;
-  onToggleStep: (stepId: string) => void;
   icon: React.ComponentType<{ className?: string }>;
+  activeStep: string | null;
+  onStepClick: (stepId: string) => void;
 }
 
-function MobileProcessColumn({ title, subtitle, steps, colorScheme, expandedStep, onToggleStep, icon: IconComponent }: ProcessColumnProps) {
-  const gradients = {
-    web: 'from-blue-500 to-purple-600',
-    graphics: 'from-green-500 to-orange-500'
-  };
-
+function ProcessColumn({ title, subtitle, steps, icon: IconComponent, activeStep, onStepClick }: ProcessColumnProps) {
   return (
     <div className="flex-1">
       {/* Column Header */}
@@ -397,84 +500,40 @@ function MobileProcessColumn({ title, subtitle, steps, colorScheme, expandedStep
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-8"
+        className="text-center mb-12"
       >
-        <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${gradients[colorScheme]} rounded-xl mb-4`}>
-          <IconComponent className="w-8 h-8 text-white" />
-        </div>
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        {/* Gradient title - większy i lepiej zaprojektowany, bez ikony */}
+        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 bg-gradient-to-r from-black via-gray-800 to-gray-600 dark:from-white dark:via-gray-200 dark:to-gray-400 bg-clip-text text-transparent leading-tight tracking-tight">
           {title}
         </h3>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
+        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium">
           {subtitle}
         </p>
+        
+        {/* Stats */}
+        <div className="flex items-center justify-center space-x-8 mt-6 text-sm">
+          <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+            <Users className="w-4 h-4" />
+            <span className="font-medium">1000+ projektów</span>
+          </div>
+          <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+            <Zap className="w-4 h-4" />
+            <span className="font-medium">99% zadowolenia</span>
+          </div>
+        </div>
       </motion.div>
 
       {/* Steps */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {steps.map((step, index) => (
-          <motion.div
+          <ModernStepCard
             key={step.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.05 }}
-          >
-            <StepDetail
-              step={step}
-              isExpanded={expandedStep === step.id}
-              onToggle={() => onToggleStep(step.id)}
-              colorScheme={colorScheme}
-            />
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-function ProcessColumn({ title, subtitle, steps, colorScheme, expandedStep, onToggleStep, icon: IconComponent }: ProcessColumnProps) {
-  const gradients = {
-    web: 'from-blue-500 to-purple-600',
-    graphics: 'from-green-500 to-orange-500'
-  };
-
-  return (
-    <div className="flex-1">
-      {/* Column Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-        className="text-center mb-8"
-      >
-        <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${gradients[colorScheme]} rounded-xl mb-4`}>
-          <IconComponent className="w-8 h-8 text-white" />
-        </div>
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          {title}
-        </h3>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          {subtitle}
-        </p>
-      </motion.div>
-
-      {/* Steps */}
-      <div className="space-y-4">
-        {steps.map((step, index) => (
-          <motion.div
-            key={step.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <StepDetail
-              step={step}
-              isExpanded={expandedStep === step.id}
-              onToggle={() => onToggleStep(step.id)}
-              colorScheme={colorScheme}
-            />
-          </motion.div>
+            step={step}
+            index={index}
+            isActive={activeStep === step.id}
+            onClick={() => onStepClick(step.id)}
+            isLast={index === steps.length - 1}
+          />
         ))}
       </div>
     </div>
@@ -482,172 +541,189 @@ function ProcessColumn({ title, subtitle, steps, colorScheme, expandedStep, onTo
 }
 
 export function Process() {
-  const [expandedStep, setExpandedStep] = useState<string | null>(null);
-  const [mobileFilter, setMobileFilter] = useState<'web' | 'graphics'>('web');
+  const [activeStep, setActiveStep] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'web' | 'graphics'>('web');
 
-  const toggleStep = (stepId: string) => {
-    setExpandedStep(expandedStep === stepId ? null : stepId);
+  const handleStepClick = (stepId: string) => {
+    // Toggle - jeśli kliknięty krok jest już aktywny, zamknij go
+    setActiveStep(activeStep === stepId ? null : stepId);
+  };
+
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToPortfolio = () => {
+    const portfolioSection = document.getElementById('portfolio');
+    if (portfolioSection) {
+      portfolioSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
-    <section id="process" className="py-20 bg-white dark:bg-black relative overflow-hidden">
-      {/* Animated Background Grid */}
-      <div
-        className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,#80808020_1px,transparent_1px),linear-gradient(to_bottom,#80808020_1px,transparent_1px)] bg-[size:96px_96px] sm:bg-[size:128px_128px] md:bg-[size:160px_160px] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)]"
-        style={{
-          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
-          maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
-          WebkitMaskRepeat: 'no-repeat',
-          maskRepeat: 'no-repeat'
-        }}
-      />
+    <section id="process" className="py-20 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-black dark:via-gray-900/20 dark:to-black relative overflow-hidden">
+      {/* Simplified Background - bez migających kropek */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 bg-[linear-gradient(to_right,#80808015_1px,transparent_1px),linear-gradient(to_bottom,#80808015_1px,transparent_1px)] bg-[size:96px_96px] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)]"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
+          }}
+        />
+      </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
+        {/* Main Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Proces Współpracy
+          <div className="inline-flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <Sparkles className="w-4 h-4" />
+            <span>Profesjonalny proces</span>
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            Jak pracujemy?
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-            Wybierz typ projektu i poznaj nasz proces krok po kroku
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Poznaj nasz sprawdzony proces, który gwarantuje sukces każdego projektu. 
+            Od pierwszej konsultacji do wdrożenia - jesteśmy z Tobą na każdym kroku.
           </p>
         </motion.div>
 
-        {/* Mobile Filter */}
+        {/* Tab Switcher */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="lg:hidden mb-8"
+          className="flex justify-center mb-16"
         >
-          <div className="bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 p-1 flex">
-            <button
-              onClick={() => setMobileFilter('web')}
-              className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
-                mobileFilter === 'web'
-                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-              }`}
-            >
-              <Monitor className="w-5 h-5" />
-              <span>Strony internetowe</span>
-            </button>
-            <button
-              onClick={() => setMobileFilter('graphics')}
-              className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
-                mobileFilter === 'graphics'
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-              }`}
-            >
-              <Palette className="w-5 h-5" />
-              <span>Grafika & Branding</span>
-            </button>
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-2 shadow-lg">
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setActiveTab('web')}
+                className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                  activeTab === 'web'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
+                }`}
+              >
+                <Monitor className="w-5 h-5" />
+                <span>Strony internetowe</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('graphics')}
+                className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                  activeTab === 'graphics'
+                    ? 'bg-gradient-to-r from-green-500 to-orange-500 text-white shadow-lg'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
+                }`}
+              >
+                <Palette className="w-5 h-5" />
+                <span>Grafika & Branding</span>
+              </button>
+            </div>
           </div>
         </motion.div>
 
-        {/* Desktop: Two Columns */}
-        <div className="hidden lg:flex gap-12">
-          <ProcessColumn
-            title="Strony internetowe"
-            subtitle="Od pomysłu do działającej strony"
-            steps={WEB_PROCESS_STEPS}
-            colorScheme="web"
-            expandedStep={expandedStep}
-            onToggleStep={toggleStep}
-            icon={Monitor}
-          />
-          
-          <ProcessColumn
-            title="Grafika & Branding"
-            subtitle="Od koncepcji do gotowych materiałów"
-            steps={GRAPHICS_PROCESS_STEPS}
-            colorScheme="graphics"
-            expandedStep={expandedStep}
-            onToggleStep={toggleStep}
-            icon={Palette}
-          />
-        </div>
+        {/* Process Content */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'web' ? (
+            <motion.div
+              key="web"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.4 }}
+              className="max-w-4xl mx-auto"
+            >
+              <ProcessColumn
+                title="Strony internetowe"
+                subtitle="Od pomysłu do działającej strony"
+                steps={WEB_PROCESS_STEPS}
+                icon={Monitor}
+                activeStep={activeStep}
+                onStepClick={handleStepClick}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="graphics"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.4 }}
+              className="max-w-4xl mx-auto"
+            >
+              <ProcessColumn
+                title="Grafika & Branding"
+                subtitle="Od koncepcji do gotowych materiałów"
+                steps={GRAPHICS_PROCESS_STEPS}
+                icon={Palette}
+                activeStep={activeStep}
+                onStepClick={handleStepClick}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Mobile: Single Column with Filter */}
-        <div className="lg:hidden">
-          <AnimatePresence mode="wait">
-            {mobileFilter === 'web' ? (
-              <motion.div
-                key="web"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <MobileProcessColumn
-                  title="Strony internetowe"
-                  subtitle="Od pomysłu do działającej strony"
-                  steps={WEB_PROCESS_STEPS}
-                  colorScheme="web"
-                  expandedStep={expandedStep}
-                  onToggleStep={toggleStep}
-                  icon={Monitor}
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="graphics"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <MobileProcessColumn
-                  title="Grafika & Branding"
-                  subtitle="Od koncepcji do gotowych materiałów"
-                  steps={GRAPHICS_PROCESS_STEPS}
-                  colorScheme="graphics"
-                  expandedStep={expandedStep}
-                  onToggleStep={toggleStep}
-                  icon={Palette}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* CTA */}
+        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          className="text-center mt-20"
         >
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-8 max-w-2xl mx-auto">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-              Gotowy na rozpoczęcie współpracy?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Niezależnie od tego, czy potrzebujesz strony internetowej czy projektów graficznych - jesteśmy tutaj, aby pomóc!
-            </p>
-            <motion.button
-              onClick={() => {
-                const contactSection = document.getElementById('contact');
-                if (contactSection) {
-                  contactSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <span>Rozpocznij projekt</span>
-              <ArrowRight className="w-4 h-4" />
-            </motion.button>
+          <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-8 md:p-12 max-w-4xl mx-auto overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute inset-0 opacity-30">
+              <div className="w-full h-full" style={{
+                backgroundImage: `url("data:image/svg+xml,%3csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3cpattern id='grid' width='60' height='60' patternUnits='userSpaceOnUse'%3e%3ccircle cx='30' cy='30' r='2' fill='%23ffffff' fill-opacity='0.1'/%3e%3c/pattern%3e%3c/defs%3e%3crect width='100%25' height='100%25' fill='url(%23grid)'/%3e%3c/svg%3e")`,
+                backgroundSize: '60px 60px'
+              }} />
+            </div>
+            
+            <div className="relative z-10">
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                Gotowy na rozpoczęcie współpracy?
+              </h3>
+              <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+                Niezależnie od tego, czy potrzebujesz strony internetowej czy projektów graficznych - 
+                jesteśmy tutaj, aby pomóc Ci osiągnąć cele biznesowe.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <motion.button
+                  onClick={scrollToContact}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center space-x-2 bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-colors duration-200 shadow-lg"
+                >
+                  <span>Rozpocznij projekt</span>
+                  <ArrowRight className="w-5 h-5" />
+                </motion.button>
+                
+                <motion.button
+                  onClick={scrollToPortfolio}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center space-x-2 border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-colors duration-200"
+                >
+                  <Target className="w-5 h-5" />
+                  <span>Zobacz portfolio</span>
+                </motion.button>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
