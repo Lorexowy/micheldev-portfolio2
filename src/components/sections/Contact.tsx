@@ -3,12 +3,12 @@
 
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import emailjs from '@emailjs/browser';
 import { 
   Mail, 
   Phone, 
   Clock, 
   Instagram, 
-  MapPin, 
   Send, 
   CheckCircle, 
   AlertCircle,
@@ -16,7 +16,8 @@ import {
   User,
   Globe,
   MessageSquare,
-  DollarSign
+  DollarSign,
+  Sparkles
 } from 'lucide-react';
 
 // Typy projektów
@@ -47,101 +48,14 @@ interface FormData {
   projectType: string;
   budget: string;
   message: string;
+  gdprConsent: boolean;
 }
 
 interface FormErrors {
   name?: string;
   email?: string;
   message?: string;
-}
-
-// Mapa Polski SVG (dokładniejszy kształt granic)
-function PolandMap() {
-  return (
-    <svg 
-      viewBox="0 0 400 300" 
-      className="w-full h-full"
-      fill="none"
-    >
-      {/* Dokładniejszy kształt granic Polski */}
-      <motion.path
-        d="M80 120 L85 100 L95 85 L110 75 L130 70 L155 68 L180 65 L200 62 L225 60 L250 58 L275 60 L300 65 L320 75 L335 85 L345 100 L350 115 L348 130 L345 145 L340 160 L335 175 L330 190 L325 200 L315 210 L300 218 L280 225 L260 228 L240 230 L220 228 L200 225 L180 222 L160 218 L140 212 L125 205 L110 195 L100 180 L95 165 L90 150 L85 135 L80 120 Z"
-        fill="none"
-        stroke="rgb(var(--primary))"
-        strokeWidth="3"
-        className="transition-colors duration-300"
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ 
-          duration: 2, 
-          ease: "easeInOut",
-          delay: 0.5
-        }}
-      />
-      
-      {/* Delikatne wypełnienie */}
-      <path
-        d="M80 120 L85 100 L95 85 L110 75 L130 70 L155 68 L180 65 L200 62 L225 60 L250 58 L275 60 L300 65 L320 75 L335 85 L345 100 L350 115 L348 130 L345 145 L340 160 L335 175 L330 190 L325 200 L315 210 L300 218 L280 225 L260 228 L240 230 L220 228 L200 225 L180 222 L160 218 L140 212 L125 205 L110 195 L100 180 L95 165 L90 150 L85 135 L80 120 Z"
-        fill="rgb(var(--primary))"
-        fillOpacity="0.1"
-        className="transition-colors duration-300"
-      />
-      
-      {/* Subtelne kropki reprezentujące główne miasta (opcjonalnie) */}
-      <motion.circle
-        cx="215"
-        cy="145"
-        r="2"
-        fill="rgb(var(--primary))"
-        fillOpacity="0.6"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.6, 1, 0.6]
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      
-      <motion.circle
-        cx="160"
-        cy="130"
-        r="2"
-        fill="rgb(var(--primary))"
-        fillOpacity="0.6"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.6, 1, 0.6]
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1
-        }}
-      />
-      
-      <motion.circle
-        cx="270"
-        cy="125"
-        r="2"
-        fill="rgb(var(--primary))"
-        fillOpacity="0.6"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.6, 1, 0.6]
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 2
-        }}
-      />
-    </svg>
-  );
+  gdprConsent?: string;
 }
 
 // Dropdown component
@@ -209,6 +123,7 @@ function Dropdown({
 }
 
 export function Contact() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -216,7 +131,8 @@ export function Contact() {
     website: '',
     projectType: '',
     budget: '',
-    message: ''
+    message: '',
+    gdprConsent: false
   });
   
   const [errors, setErrors] = useState<FormErrors>({});
@@ -240,6 +156,10 @@ export function Contact() {
       newErrors.message = 'Wiadomość jest wymagana';
     }
 
+    if (!formData.gdprConsent) {
+      newErrors.gdprConsent = 'Zgoda na przetwarzanie danych osobowych jest wymagana';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -253,8 +173,35 @@ export function Contact() {
     setSubmitStatus('idle');
 
     try {
-      // Tutaj będzie integracja z EmailJS
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Symulacja
+      // Przygotowanie danych dla EmailJS
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone || 'Nie podano',
+        website: formData.website || 'Nie podano',
+        project_type: PROJECT_TYPES.find(type => type.value === formData.projectType)?.label || 'Nie wybrano',
+        budget: BUDGET_RANGES.find(budget => budget.value === formData.budget)?.label || 'Nie wybrano',
+        message: formData.message,
+        gdpr_consent: 'TAK - zgoda udzielona dnia ' + new Date().toLocaleString('pl-PL', {
+          year: 'numeric',
+          month: '2-digit', 
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }),
+        to_email: 'mateusz.michel7@gmail.com' // Twój email docelowy
+      };
+
+      // Wysłanie emaila przez EmailJS
+      const result = await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        templateParams,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      );
+
+      console.log('Email wysłany pomyślnie:', result.text);
       
       setSubmitStatus('success');
       setFormData({
@@ -264,16 +211,19 @@ export function Contact() {
         website: '',
         projectType: '',
         budget: '',
-        message: ''
+        message: '',
+        gdprConsent: false
       });
+      
     } catch (error) {
+      console.error('Błąd wysyłania emaila:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -318,7 +268,11 @@ export function Contact() {
             viewport={{ once: true }}
             className="lg:col-span-3"
           >
-            <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-gray-200 dark:border-zinc-700 p-8 shadow-lg">
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              className="bg-white dark:bg-zinc-800 rounded-2xl border border-gray-200 dark:border-zinc-700 p-8 shadow-lg"
+            >
               <div className="space-y-6">
                 {/* Name */}
                 <div>
@@ -330,12 +284,14 @@ export function Contact() {
                     <input
                       type="text"
                       id="name"
+                      name="from_name"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       className={`w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-900 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                         errors.name ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
                       }`}
                       placeholder="Twoje imię"
+                      disabled={isSubmitting}
                     />
                   </div>
                   {errors.name && (
@@ -353,12 +309,14 @@ export function Contact() {
                     <input
                       type="email"
                       id="email"
+                      name="from_email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       className={`w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-900 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                         errors.email ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
                       }`}
                       placeholder="twoj@email.com"
+                      disabled={isSubmitting}
                     />
                   </div>
                   {errors.email && (
@@ -378,10 +336,12 @@ export function Contact() {
                       <input
                         type="tel"
                         id="phone"
+                        name="phone"
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
                         className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="+48 123 456 789"
+                        disabled={isSubmitting}
                       />
                     </div>
                   </div>
@@ -396,10 +356,12 @@ export function Contact() {
                       <input
                         type="url"
                         id="website"
+                        name="website"
                         value={formData.website}
                         onChange={(e) => handleInputChange('website', e.target.value)}
                         className="w-full pl-11 pr-4 py-3 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         placeholder="https://twojafirma.pl"
+                        disabled={isSubmitting}
                       />
                     </div>
                   </div>
@@ -440,6 +402,7 @@ export function Contact() {
                   </label>
                   <textarea
                     id="message"
+                    name="message"
                     rows={5}
                     value={formData.message}
                     onChange={(e) => handleInputChange('message', e.target.value)}
@@ -447,18 +410,58 @@ export function Contact() {
                       errors.message ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
                     }`}
                     placeholder="Opisz swój projekt i oczekiwania..."
+                    disabled={isSubmitting}
                   />
                   {errors.message && (
                     <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.message}</p>
                   )}
                 </div>
 
+                {/* GDPR Consent */}
+                <div>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex items-center h-5">
+                      <input
+                        id="gdpr-consent"
+                        name="gdpr_consent"
+                        type="checkbox"
+                        checked={formData.gdprConsent}
+                        onChange={(e) => handleInputChange('gdprConsent', e.target.checked)}
+                        className={`w-4 h-4 text-blue-600 bg-white dark:bg-zinc-900 border rounded focus:ring-blue-500 focus:ring-2 transition-colors ${
+                          errors.gdprConsent ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
+                        }`}
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div className="text-sm">
+                      <label htmlFor="gdpr-consent" className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        Wyrażam zgodę na przetwarzanie moich danych osobowych przez MichelDev w celu udzielenia odpowiedzi na zapytanie oraz przygotowania oferty zgodnie z{' '}
+                        <a 
+                          href="/polityka-prywatnosci" 
+                          target="_blank"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline"
+                        >
+                          polityką prywatności
+                        </a>.{' '}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Podstawa prawna: Art. 6 ust. 1 lit. a RODO - zgoda. Możesz wycofać zgodę w każdym momencie.
+                      </div>
+                    </div>
+                  </div>
+                  {errors.gdprConsent && (
+                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.gdprConsent}</p>
+                  )}
+                </div>
+
                 {/* Submit Button */}
-                <motion.div
-                  onClick={handleSubmit}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full flex items-center justify-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 cursor-pointer ${
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  whileHover={!isSubmitting ? { scale: 1.02 } : {}}
+                  whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                  className={`w-full flex items-center justify-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-200 ${
                     isSubmitting 
                       ? 'opacity-50 cursor-not-allowed' 
                       : 'hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl'
@@ -475,7 +478,7 @@ export function Contact() {
                       <span>Wyślij i otrzymaj bezpłatną wycenę</span>
                     </>
                   )}
-                </motion.div>
+                </motion.button>
 
                 {/* Status Messages */}
                 <AnimatePresence>
@@ -499,15 +502,15 @@ export function Contact() {
                       className="flex items-center space-x-2 p-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-800"
                     >
                       <AlertCircle className="w-5 h-5" />
-                      <span>Wystąpił błąd. Spróbuj ponownie lub skontaktuj się bezpośrednio.</span>
+                      <span>Wystąpił błąd podczas wysyłania. Spróbuj ponownie lub skontaktuj się bezpośrednio.</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
-            </div>
+            </form>
           </motion.div>
 
-          {/* Contact Info & Map */}
+          {/* Contact Info & Project Guide */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -551,27 +554,95 @@ export function Contact() {
               </div>
             </div>
 
-            {/* Map */}
+            {/* Project Start Guide */}
             <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-gray-200 dark:border-zinc-700 p-8 shadow-lg">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                Zasięg działania
+                Rozpocznij projekt
               </h3>
               
-              <div className="aspect-[4/3] mb-4">
-                <PolandMap />
+              <div className="space-y-6">
+                {/* Step 1 */}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="flex items-start space-x-4"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-bold text-blue-600 dark:text-blue-400">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                      Wypełnij formularz
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Opisz swój projekt i oczekiwania. Im więcej szczegółów, tym lepiej!
+                    </p>
+                  </div>
+                </motion.div>
+
+                {/* Step 2 */}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="flex items-start space-x-4"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-bold text-purple-600 dark:text-purple-400">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                      Umówimy konsultację
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Porozmawiamy o Twoich potrzebach przez telefon lub videorozmowę.
+                    </p>
+                  </div>
+                </motion.div>
+
+                {/* Step 3 */}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  className="flex items-start space-x-4"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-bold text-green-600 dark:text-green-400">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                      Otrzymasz wycenę w 24h
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Przygotuje szczegółową wycenę z harmonogramem realizacji.
+                    </p>
+                  </div>
+                </motion.div>
               </div>
-              
-              <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
-                <div>
-                  <p className="text-gray-700 dark:text-gray-300 text-sm">
-                    <strong>Zasięg:</strong> Cała Polska
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-                    Realizujemy projekty dla klientów z całego kraju. Współpraca odbywa się zdalnie z pełnym wsparciem online.
-                  </p>
+
+              {/* CTA Box */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200/50 dark:border-blue-800/50"
+              >
+                <div className="flex items-center space-x-2 mb-2">
+                  <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-semibold text-blue-900 dark:text-blue-200">
+                    Bezpłatna konsultacja
+                  </span>
                 </div>
-              </div>
+                <p className="text-xs text-blue-800 dark:text-blue-300">
+                  Pierwsza konsultacja jest całkowicie bezpłatna. Porozmawiamy o Twoim projekcie bez żadnych zobowiązań.
+                </p>
+              </motion.div>
             </div>
           </motion.div>
         </div>
