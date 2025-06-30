@@ -44,17 +44,6 @@ export function ThemeToggle() {
     }
   };
 
-  const getLabel = (selectedTheme: string) => {
-    switch (selectedTheme) {
-      case 'light':
-        return 'Jasny';
-      case 'dark':
-        return 'Ciemny';
-      default:
-        return 'System';
-    }
-  };
-
   const themeOptions = [
     { value: 'light', label: 'Jasny', icon: Sun },
     { value: 'dark', label: 'Ciemny', icon: Moon },
