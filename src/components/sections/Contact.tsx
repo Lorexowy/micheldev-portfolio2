@@ -30,6 +30,7 @@ const PROJECT_TYPES = [
 
 // Budżety
 const BUDGET_RANGES = [
+  { value: 'under-500', label: 'Do 500 zł' },
   { value: 'under-2k', label: 'Do 2 000 zł' },
   { value: '2k-5k', label: '2 000 - 5 000 zł' },
   { value: '5k-10k', label: '5 000 - 10 000 zł' },
@@ -300,10 +301,10 @@ export function Contact() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Skontaktuj się z nami
+            Skontaktuj się ze mną!
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Gotowy na rozpoczęcie współpracy? Napisz do nas i otrzymaj bezpłatną wycenę!
+            Gotowy na rozpoczęcie współpracy? Napisz i otrzymaj bezpłatną wycenę!
           </p>
         </motion.div>
 
@@ -523,12 +524,12 @@ export function Contact() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  <span className="text-gray-700 dark:text-gray-300">kontakt@micheldev.pl</span>
+                  <span className="text-gray-700 dark:text-gray-300">mateusz.michel7@gmail.com</span>
                 </div>
                 
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  <span className="text-gray-700 dark:text-gray-300">+48 123 456 789</span>
+                  <span className="text-gray-700 dark:text-gray-300">+48 519 430 169</span>
                 </div>
                 
                 <div className="flex items-center space-x-3">
@@ -539,7 +540,7 @@ export function Contact() {
                 <div className="flex items-center space-x-3">
                   <Instagram className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   <a 
-                    href="https://instagram.com/micheldev" 
+                    href="https://instagram.com/michelwebdev" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"

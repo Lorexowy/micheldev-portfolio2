@@ -41,7 +41,7 @@ const WEB_PROCESS_STEPS = [
       'Badanie konkurencji online',
       'Ustalenie budżetu i timeline'
     ],
-    tools: ['Zoom/Meet', 'Miro', 'Google Analytics', 'Notion'],
+    tools: ['Zoom/Meet', 'Skype', 'Microsoft Teams', 'Telefon', 'Miro', 'Google Analytics', 'Facetime'],
     deliverables: [
       'Brief projektowy',
       'Analiza konkurencji',
@@ -63,7 +63,7 @@ const WEB_PROCESS_STEPS = [
       'User journey mapping',
       'Specyfikacja funkcjonalności'
     ],
-    tools: ['Figma', 'Miro', 'Draw.io', 'Notion'],
+    tools: ['Miro', 'Draw.io', 'Notion'],
     deliverables: [
       'Sitemap strony',
       'Wireframes kluczowych stron',
@@ -85,7 +85,7 @@ const WEB_PROCESS_STEPS = [
       'System designu',
       'Testy użyteczności'
     ],
-    tools: ['Figma', 'Adobe XD', 'Principle', 'Maze'],
+    tools: ['Figma', 'Adobe XD'],
     deliverables: [
       'Projekty wszystkich stron',
       'Prototypy klikalne',
@@ -107,7 +107,7 @@ const WEB_PROCESS_STEPS = [
       'Implementacja funkcji',
       'Optymalizacja wydajności'
     ],
-    tools: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'],
+    tools: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'HTML', 'CSS', 'Firebase', 'PHP', 'MySQL', 'WordPress', 'WooCommerce'],
     deliverables: [
       'Działająca strona',
       'Panel administracyjny',
@@ -510,17 +510,6 @@ function ProcessColumn({ title, subtitle, steps, icon: IconComponent, activeStep
           {subtitle}
         </p>
         
-        {/* Stats */}
-        <div className="flex items-center justify-center space-x-8 mt-6 text-sm">
-          <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
-            <Users className="w-4 h-4" />
-            <span className="font-medium">1000+ projektów</span>
-          </div>
-          <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
-            <Zap className="w-4 h-4" />
-            <span className="font-medium">99% zadowolenia</span>
-          </div>
-        </div>
       </motion.div>
 
       {/* Steps */}
@@ -585,17 +574,13 @@ export function Process() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Sparkles className="w-4 h-4" />
-            <span>Profesjonalny proces</span>
-          </div>
           
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Jak pracujemy?
+            Jak pracuję?
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Poznaj nasz sprawdzony proces, który gwarantuje sukces każdego projektu. 
-            Od pierwszej konsultacji do wdrożenia - jesteśmy z Tobą na każdym kroku.
+            Poznaj mój proces, który gwarantuje sukces każdego projektu.
+            Od pierwszej konsultacji do wdrożenia
           </p>
         </motion.div>
 
@@ -699,7 +684,7 @@ export function Process() {
               </h3>
               <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
                 Niezależnie od tego, czy potrzebujesz strony internetowej czy projektów graficznych - 
-                jesteśmy tutaj, aby pomóc Ci osiągnąć cele biznesowe.
+                jestem tutaj, aby pomóc Ci osiągnąć cele biznesowe.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

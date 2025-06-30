@@ -53,30 +53,6 @@ const PORTFOLIO_PROJECTS = [
     image: '/images/portfolio/cafe-branding.jpg',
     category: 'graphics',
     url: null
-  },
-  {
-    id: 7,
-    title: 'Wizytówki Lekarza',
-    description: 'Eleganckie wizytówki dla prywatnej praktyki lekarskiej',
-    image: '/images/portfolio/business-cards.jpg',
-    category: 'graphics',
-    url: null
-  },
-  {
-    id: 8,
-    title: 'Plakat Koncertowy',
-    description: 'Dynamiczny plakat dla festiwalu muzycznego',
-    image: '/images/portfolio/concert-poster.jpg',
-    category: 'graphics',
-    url: null
-  },
-  {
-    id: 9,
-    title: 'Logo & Branding Fit',
-    description: 'Energetyczne logo dla siłowni z kompleksowym brandingiem',
-    image: '/images/portfolio/gym-branding.jpg',
-    category: 'graphics',
-    url: null
   }
 ];
 
@@ -279,10 +255,10 @@ export function Portfolio() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Portfolio
+            Moje Projekty
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-            Sprawdź nasze najnowsze realizacje
+            Sprawdź moje ostatnie realizacje w różnych kategoriach. Od stron internetowych po grafikę, znajdziesz tu różnorodne projekty graficzne, które pokazują moje umiejętności i kreatywność.
           </p>
         </motion.div>
 
