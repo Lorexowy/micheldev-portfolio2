@@ -111,6 +111,36 @@ function ProjectImagePlaceholder({ title, category }: { title: string; category:
 }
 
 function ProjectCard({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Fix hydration issue
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only track mouse on devices that support hover
+    if (window.matchMedia('(hover: hover)').matches) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setMousePosition({ x, y });
+    }
+  };
+
+  const handleMouseEnter = () => {
+    // Only enable hover on devices that support hover
+    if (window.matchMedia('(hover: hover)').matches) {
+      setIsHovered(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   return (
     <motion.div
       layout
@@ -118,8 +148,27 @@ function ProjectCard({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
-      className="group bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 overflow-hidden hover:border-gray-300 dark:hover:border-zinc-700 transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/20 dark:hover:shadow-zinc-900/20 h-full"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="group relative bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 overflow-hidden hover:border-gray-300 dark:hover:border-zinc-700 transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/20 dark:hover:shadow-zinc-900/20 h-full cursor-pointer"
     >
+      {/* Border Highlight */}
+      {mounted && isHovered && (
+        <div
+          className="absolute inset-0 rounded-xl pointer-events-none transition-all duration-500 ease-out"
+          style={{
+            background: `radial-gradient(1000px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.8), transparent 25%)`,
+            mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            maskComposite: 'xor',
+            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            WebkitMaskComposite: 'xor',
+            padding: '2px',
+            borderRadius: '0.75rem',
+          }}
+        />
+      )}
+
       {/* Image Container */}
       <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-gray-100 dark:bg-zinc-800">
         <ProjectImagePlaceholder title={project.title} category={project.category} />
