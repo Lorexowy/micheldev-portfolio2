@@ -19,10 +19,7 @@ import {
   Palette,
   Monitor,
   Clock,
-  Users,
-  Zap,
-  Target,
-  Sparkles
+  Target
 } from 'lucide-react';
 
 // Dane procesów
