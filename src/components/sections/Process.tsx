@@ -489,7 +489,7 @@ interface ProcessColumnProps {
   onStepClick: (stepId: string) => void;
 }
 
-function ProcessColumn({ title, subtitle, steps, icon: IconComponent, activeStep, onStepClick }: ProcessColumnProps) {
+function ProcessColumn({ title, subtitle, steps, activeStep, onStepClick }: ProcessColumnProps) {
   return (
     <div className="flex-1">
       {/* Column Header */}
