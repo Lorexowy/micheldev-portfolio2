@@ -8,27 +8,45 @@ import { Monitor, Palette, Settings } from 'lucide-react';
 const SERVICES = [
   {
     id: 'web-development',
-    title: 'Strony internetowe',
-    subtitle: 'Nowoczesne rozwiązania',
-    description: 'Responsywne strony • SEO • Szybkość',
+    title: 'Tworzenie stron internetowych',
     icon: Monitor,
-    badge: 'Web Dev'
+    color: '#3b82f6', // blue
+    subtitle: 'Nowoczesne rozwiązania webowe',
+    features: [
+      'Responsywny design dla wszystkich urządzeń',
+      'Optymalizacja SEO i szybkości ładowania',
+      'Nowoczesne technologie (React, Next.js)',
+      'Integracja z systemami CMS',
+      'Bezpieczeństwo i kopie zapasowe'
+    ]
   },
   {
     id: 'graphics', 
-    title: 'Grafika & Branding',
-    subtitle: 'Identyfikacja wizualna', 
-    description: 'Logo • Branding • Materiały',
+    title: 'Grafika komputerowa',
     icon: Palette,
-    badge: 'Design'
+    color: '#10b981', // green
+    subtitle: 'Kompleksowa identyfikacja wizualna',
+    features: [
+      'Projektowanie logo i identyfikacji wizualnej',
+      'Kompletny branding i style guide',
+      'Materiały marketingowe i reklamowe',
+      'Grafiki na social media',
+      'Projekty do druku i formatu digital'
+    ]
   },
   {
     id: 'administration',
-    title: 'Administracja',
-    subtitle: 'Opieka techniczna',
-    description: 'Aktualizacje • Monitoring • Wsparcie',
+    title: 'Administracja stron',
     icon: Settings,
-    badge: 'Support'
+    color: '#f59e0b', // amber
+    subtitle: 'Kompleksowa opieka techniczna',
+    features: [
+      'Regularne aktualizacje i kopie zapasowe',
+      '24/7 monitoring bezpieczeństwa strony',
+      'Optymalizacja wydajności i szybkości',
+      'Wsparcie techniczne i szkolenia',
+      'Dodawanie nowych funkcjonalności'
+    ],
   }
 ];
 
@@ -38,15 +56,29 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
   return (
     <div className="card">
       <div className="content">
-        {/* Back Side - pokazuje się po hover */}
+        {/* Back Side - pokazuje się po hover - SZCZEGÓŁY */}
         <div className="back">
           <div className="back-content">
-            <IconComponent className="w-12 h-12 text-white" />
-            <strong className="text-lg font-bold">Poznaj szczegóły</strong>
+            <div className="p-6 text-center h-full flex flex-col justify-center">
+              <div className="mb-4">
+                <IconComponent className="w-10 h-10 text-white mx-auto mb-2" />
+                <h3 className="text-lg font-bold text-white mb-1">{service.title}</h3>
+                <p className="text-sm text-gray-300">{service.subtitle}</p>
+              </div>
+              
+              <div className="space-y-3 mb-4">
+                {service.features.slice(0, 4).map((feature, i) => (
+                  <div key={i} className="flex items-start text-left text-sm">
+                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2 mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-200">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
         
-        {/* Front Side - domyślnie widoczna */}
+        {/* Front Side - domyślnie widoczna - TYLKO ikona i tytuł */}
         <div className="front">
           <div className="img">
             <div className="circle"></div>
@@ -54,17 +86,11 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
             <div className="circle" id="bottom"></div>
           </div>
           <div className="front-content">
-            <small className="badge">{service.badge}</small>
-            <div className="description">
-              <div className="title">
-                <p className="title">
-                  <strong>{service.title}</strong>
-                </p>
-                <IconComponent className="w-4 h-4 text-green-400" />
-              </div>
-              <p className="card-footer">
-                {service.description}
-              </p>
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <IconComponent className="w-16 h-16 text-white mb-4" />
+              <h3 className="text-xl font-bold text-white leading-tight">
+                {service.title}
+              </h3>
             </div>
           </div>
         </div>
@@ -104,6 +130,7 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           display: flex;
           align-items: center;
           overflow: hidden;
+          transform: rotateY(180deg);
         }
 
         .back::before {
@@ -112,7 +139,7 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           display: block;
           width: 160px;
           height: 160%;
-          background: linear-gradient(90deg, transparent, #ff9966, #ff9966, #ff9966, #ff9966, transparent);
+          background: linear-gradient(90deg, transparent, ${service.color || '#ff9966'}, ${service.color || '#ff9966'}, ${service.color || '#ff9966'}, ${service.color || '#ff9966'}, transparent);
           animation: rotation_481 5000ms infinite linear;
         }
 
@@ -126,8 +153,7 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           display: flex;
           flex-direction: column;
           justify-content: center;
-          align-items: center;
-          gap: 30px;
+          align-items: stretch;
         }
 
         .card:hover .content {
@@ -144,7 +170,6 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
         }
 
         .front {
-          transform: rotateY(180deg);
           color: white;
         }
 
@@ -155,7 +180,8 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           padding: 20px;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          justify-content: center;
+          align-items: center;
         }
 
         .front-content .badge {
