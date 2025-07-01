@@ -149,10 +149,6 @@ export function Footer() {
                           </div>
                           <span className="transition-all duration-500 group-hover:translate-x-1 font-medium text-sm">@michelwebdev</span>
                         </div>
-                        <div className="flex items-center space-x-1">
-                          <span className="text-xs transition-all duration-500 group-hover:translate-x-1">Obserwuj</span>
-                          <ExternalLink className="w-3 h-3 transition-transform duration-500 group-hover:translate-x-1 opacity-70" />
-                        </div>
                       </div>
                     </span>
                   </a>
