@@ -80,8 +80,8 @@ export function Footer() {
               </p>
               <motion.button
                 onClick={scrollToContact}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1 }}
+                whileTap={{ scale: 1 }}
                 className="relative inline-flex h-12 active:scale-95 transition overflow-hidden rounded-lg p-[1px] focus:outline-none"
               >
                 <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#e7029a_0%,#f472b6_50%,#bd5fff_100%)]">
@@ -94,7 +94,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Right Side - Services + Social */}
+          {/* Right Side - Services + Instagram + Social */}
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             
             {/* Services */}
@@ -129,25 +129,34 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Follow Me */}
+            {/* Instagram Section - NOWY PRZYCISK */}
             <div>
               <h4 className="text-lg font-semibold text-white mb-6">Zaobserwuj mnie</h4>
               <div className="space-y-4">
-                <a
-                  href="https://instagram.com/michelwebdev"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center space-x-3 p-3 bg-gradient-to-r from-gray-800/40 to-gray-700/40 rounded-xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-200"
-                >
-                  <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <Instagram className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white font-medium text-sm">Instagram</p>
-                    <p className="text-pink-400 text-xs">@michelwebdev</p>
-                  </div>
-                  <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-pink-400 transition-colors" />
-                </a>
+                <div className="relative group">
+                  <a
+                    href="https://instagram.com/michelwebdev"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative inline-block p-px font-semibold leading-6 text-white bg-gray-800 shadow-2xl cursor-pointer rounded-xl shadow-zinc-900 transition-transform duration-300 ease-in-out active:scale-95"
+                  >
+                    <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    <span className="relative z-10 block px-4 py-3 rounded-xl bg-gray-950">
+                      <div className="relative z-10 flex items-center justify-between space-x-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <Instagram className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="transition-all duration-500 group-hover:translate-x-1 font-medium text-sm">@michelwebdev</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <span className="text-xs transition-all duration-500 group-hover:translate-x-1">Obserwuj</span>
+                          <ExternalLink className="w-3 h-3 transition-transform duration-500 group-hover:translate-x-1 opacity-70" />
+                        </div>
+                      </div>
+                    </span>
+                  </a>
+                </div>
                 
                 <p className="text-xs text-gray-500 leading-relaxed">
                   Śledź moje najnowsze projekty, proces twórczy i inspiracje z świata web designu.
@@ -287,17 +296,6 @@ export function Footer() {
             <p className="text-gray-500 text-sm">
               © 2025 MichelDev. Wszystkie prawa zastrzeżone.
             </p>
-            <div className="flex items-center space-x-1 text-xs text-gray-500">
-              <span>Zbudowane z</span>
-              <motion.span
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1, repeat: Infinity, repeatDelay: 3 }}
-                className="text-red-400"
-              >
-                ❤️
-              </motion.span>
-              <span>przy użyciu Next.js i Tailwind CSS</span>
-            </div>
           </div>
         </div>
       </div>
