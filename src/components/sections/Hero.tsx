@@ -74,27 +74,31 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-12 sm:mb-16"
           >
-            <Button
-              size="lg"
+            {/* Efektowny przycisk "Moje usługi" */}
+            <button 
               onClick={scrollToServices}
-              className="w-full sm:w-60 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium rounded-lg transition-all duration-200 ease-out bg-slate-700 dark:bg-slate-200 text-white dark:text-gray-900 hover:opacity-90"
+              className="group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-blue-300 dark:hover:border-blue-400 hover:before:[box-shadow:_20px_20px_20px_30px_#3b82f6] dark:hover:before:[box-shadow:_20px_20px_20px_30px_#60a5fa] duration-500 before:duration-500 hover:duration-500 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur relative bg-slate-700 dark:bg-slate-200 w-full sm:w-60 px-6 sm:px-8 py-3 sm:py-4 border border-slate-600 dark:border-slate-300 text-base sm:text-lg font-bold rounded-lg overflow-hidden before:absolute before:w-8 sm:before:w-12 before:h-8 sm:before:h-12 before:content-[''] before:right-1 before:top-1 before:z-10 before:bg-blue-500 dark:before:bg-blue-400 before:rounded-full before:blur-lg after:absolute after:z-10 after:w-12 sm:after:w-20 after:h-12 sm:after:h-20 after:content-[''] after:bg-purple-400 dark:after:bg-purple-300 after:right-6 sm:after:right-8 after:top-2 sm:after:top-3 after:rounded-full after:blur-lg"
             >
-              <span className="relative z-10 flex items-center justify-center space-x-2">
+              <span className="relative z-20 flex items-center justify-center space-x-2 text-white dark:text-black">
                 <span>Moje usługi</span>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
               </span>
-            </Button>
+            </button>
 
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={scrollToContact}
-              className="w-full sm:w-60 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium rounded-lg transition-all duration-200 ease-out border border-gray-400 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              <span className="flex items-center justify-center space-x-2">
-                <span>Skontaktuj się</span>
-              </span>
-            </Button>
+            {/* Przycisk "Skontaktuj się" */}
+            <div className="relative group w-full sm:w-60">
+              <button 
+                onClick={scrollToContact}
+                className="relative inline-block p-px font-semibold leading-6 text-black dark:text-white bg-white dark:bg-gray-800 cursor-pointer rounded-lg transition-all duration-300 ease-in-out w-full"
+              >
+                <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 p-[1px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <span className="relative z-10 block px-6 sm:px-8 py-3 sm:py-4 rounded-lg bg-white dark:bg-black">
+                  <span className="group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300 text-base sm:text-lg">
+                    Kontakt
+                  </span>
+                </span>
+              </button>
+            </div>
           </motion.div>
         </div>
       </div>
