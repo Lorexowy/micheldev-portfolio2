@@ -9,7 +9,6 @@ import {
   MapPin, 
   Instagram,
   ArrowRight,
-  ExternalLink,
   Share2
 } from 'lucide-react';
 
