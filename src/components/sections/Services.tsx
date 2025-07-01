@@ -56,8 +56,25 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
   return (
     <div className="card">
       <div className="content">
-        {/* Back Side - pokazuje się po hover - SZCZEGÓŁY */}
+        {/* Front Side - domyślnie widoczna - SZCZEGÓŁY */}
+        <div className="front">
+          <div className="front-content">
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <IconComponent className="w-16 h-16 text-white mb-4" />
+              <h3 className="text-xl font-bold text-white leading-tight">
+                {service.title}
+              </h3>
+            </div>
+          </div>
+        </div>
+        
+        {/* Back Side - pokazuje się po hover - TYLKO ikona i tytuł */}
         <div className="back">
+          <div className="img">
+            <div className="circle"></div>
+            <div className="circle" id="right"></div>
+            <div className="circle" id="bottom"></div>
+          </div>
           <div className="back-content">
             <div className="p-6 text-center h-full flex flex-col justify-center">
               <div className="mb-4">
@@ -77,30 +94,13 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
             </div>
           </div>
         </div>
-        
-        {/* Front Side - domyślnie widoczna - TYLKO ikona i tytuł */}
-        <div className="front">
-          <div className="img">
-            <div className="circle"></div>
-            <div className="circle" id="right"></div>
-            <div className="circle" id="bottom"></div>
-          </div>
-          <div className="front-content">
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <IconComponent className="w-16 h-16 text-white mb-4" />
-              <h3 className="text-xl font-bold text-white leading-tight">
-                {service.title}
-              </h3>
-            </div>
-          </div>
-        </div>
       </div>
 
       <style jsx>{`
         .card {
           overflow: visible;
-          width: 320px;
-          height: 400px;
+          width: 380px;
+          height: 460px;
         }
 
         .content {
@@ -123,17 +123,17 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           overflow: hidden;
         }
 
-        .back {
+        /* Front - teraz ze szczegółami i gradientową ramką */
+        .front {
           width: 100%;
           height: 100%;
           justify-content: center;
           display: flex;
           align-items: center;
           overflow: hidden;
-          transform: rotateY(180deg);
         }
 
-        .back::before {
+        .front::before {
           position: absolute;
           content: ' ';
           display: block;
@@ -143,7 +143,7 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           animation: rotation_481 5000ms infinite linear;
         }
 
-        .back-content {
+        .front-content {
           position: absolute;
           width: 99%;
           height: 99%;
@@ -154,6 +154,23 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           flex-direction: column;
           justify-content: center;
           align-items: stretch;
+        }
+
+        /* Back - teraz prosta wersja z animowanymi kółkami */
+        .back {
+          transform: rotateY(180deg);
+          color: white;
+        }
+
+        .back .back-content {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
         }
 
         .card:hover .content {
@@ -169,22 +186,7 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           }
         }
 
-        .front {
-          color: white;
-        }
-
-        .front .front-content {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          padding: 20px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .front-content .badge {
+        .back-content .badge {
           background-color: #00000055;
           padding: 6px 12px;
           border-radius: 15px;
@@ -224,7 +226,7 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           line-height: 1.4;
         }
 
-        .front .img {
+        .back .img {
           position: absolute;
           width: 100%;
           height: 100%;
@@ -276,11 +278,15 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
         @media (max-width: 768px) {
           .card {
             width: 100%;
-            max-width: 320px;
-            height: 350px;
+            max-width: 380px;
+            height: 420px;
           }
           
           .front-content {
+            padding: 16px !important;
+          }
+          
+          .back-content {
             padding: 16px !important;
           }
           
@@ -299,7 +305,7 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
 
         @media (max-width: 480px) {
           .card {
-            height: 320px;
+            height: 380px;
           }
           
           .circle {
@@ -351,7 +357,7 @@ export function Services() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center"
         >
           {SERVICES.map((service) => (
             <ServiceCard key={service.id} service={service} />
