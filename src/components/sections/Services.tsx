@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion';
 import { Monitor, Palette, Settings } from 'lucide-react';
+import { trackServiceClick } from '@/lib/gtag';
 
 // Dane usług
 const SERVICES = [
@@ -53,8 +54,13 @@ const SERVICES = [
 function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
   const IconComponent = service.icon;
   
+  // Funkcja obsługi kliknięcia w kartę usługi
+  const handleServiceClick = () => {
+    trackServiceClick(service.title);
+  };
+  
   return (
-    <div className="card">
+    <div className="card" onClick={handleServiceClick}>
       <div className="content">
         {/* Front Side - domyślnie widoczna - SZCZEGÓŁY */}
         <div className="front">
@@ -101,6 +107,7 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
           overflow: visible;
           width: 380px;
           height: 460px;
+          cursor: pointer;
         }
 
         .content {

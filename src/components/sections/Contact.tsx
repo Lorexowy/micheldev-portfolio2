@@ -4,6 +4,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import emailjs from '@emailjs/browser';
+import { trackFormSubmission } from '@/lib/gtag';
 import { 
   Mail, 
   Phone, 
@@ -19,6 +20,7 @@ import {
   DollarSign,
   Sparkles
 } from 'lucide-react';
+
 
 // Typy projektów
 const PROJECT_TYPES = [
@@ -202,6 +204,8 @@ export function Contact() {
       );
 
       console.log('Email wysłany pomyślnie:', result.text);
+
+      trackFormSubmission('contact_form');
       
       setSubmitStatus('success');
       setFormData({

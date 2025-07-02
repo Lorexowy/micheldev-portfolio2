@@ -1,9 +1,12 @@
-// src/app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
+
+// TWÓJ MEASUREMENT ID
+const GA_TRACKING_ID = 'G-KJ5M3R7PDF';
 
 export const metadata: Metadata = {
   title: 'MichelDev - Profesjonalne strony internetowe i branding',
@@ -25,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="pl" suppressHydrationWarning>
       <head>
+        {/* Istniejący script dla theme */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -40,6 +44,26 @@ export default function RootLayout({
                   document.documentElement.classList.add(theme);
                 } catch (e) {}
               })();
+            `,
+          }}
+        />
+
+        {/* NOWE: Google Analytics 4 */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_TRACKING_ID}', {
+                page_path: window.location.pathname,
+              });
             `,
           }}
         />

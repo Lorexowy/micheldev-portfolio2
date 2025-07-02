@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, ChevronDown, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import { trackProjectView } from '@/lib/gtag';
 import { createPortal } from 'react-dom';
 
 // Typy danych
@@ -451,7 +452,10 @@ function WebsiteProjectCard({ project }: { project: WebsiteProject }) {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => window.open(project.url, '_blank')}
+          onClick={() => {
+            trackProjectView(project.title);
+            window.open(project.url, '_blank');
+          }}
           className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors duration-200 self-start"
         >
           <span>Zobacz stronę</span>
@@ -493,7 +497,8 @@ function GraphicsProjectCard({ project }: { project: GraphicsProject }) {
   };
 
   const handleCardClick = () => {
-    setIsModalOpen(true);
+  trackProjectView(project.clientName);
+  setIsModalOpen(true);
   };
 
   return (
