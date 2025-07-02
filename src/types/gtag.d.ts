@@ -10,7 +10,7 @@ declare global {
         value?: number;
       }
     ) => void;
-    dataLayer: any[];
+    dataLayer: Record<string, unknown>[];
   }
 }
 

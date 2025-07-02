@@ -181,14 +181,6 @@ function GraphicsGalleryModal({
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const nextImage = () => {
-    setCurrentIndex((prev) => (prev + 1) % project.gallery.length);
-  };
-
-  const prevImage = () => {
-    setCurrentIndex((prev) => (prev - 1 + project.gallery.length) % project.gallery.length);
-  };
-
   const goToImage = (index: number) => {
     setCurrentIndex(index);
   };
@@ -202,18 +194,6 @@ function GraphicsGalleryModal({
 
   // Obsługa klawiszy i blokowanie przewijania
   useEffect(() => {
-    if (isOpen) {
-      // Blokuj przewijanie tła
-      document.body.style.overflow = 'hidden';
-      // Dodaj klasę do body żeby móc stylować inne elementy
-      document.body.classList.add('modal-open');
-    } else {
-      // Przywróć przewijanie
-      document.body.style.overflow = 'unset';
-      // Usuń klasę
-      document.body.classList.remove('modal-open');
-    }
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
       
@@ -223,16 +203,28 @@ function GraphicsGalleryModal({
           break;
         case 'ArrowLeft':
           e.preventDefault();
-          prevImage();
+          setCurrentIndex((prev) => (prev - 1 + project.gallery.length) % project.gallery.length);
           break;
         case 'ArrowRight':
           e.preventDefault();
-          nextImage();
+          setCurrentIndex((prev) => (prev + 1) % project.gallery.length);
           break;
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    if (isOpen) {
+      // Blokuj przewijanie tła
+      document.body.style.overflow = 'hidden';
+      // Dodaj klasę do body żeby móc stylować inne elementy
+      document.body.classList.add('modal-open');
+      // Dodaj listener
+      document.addEventListener('keydown', handleKeyDown);
+    } else {
+      // Przywróć przewijanie
+      document.body.style.overflow = 'unset';
+      // Usuń klasę
+      document.body.classList.remove('modal-open');
+    }
     
     // Cleanup
     return () => {
@@ -241,6 +233,14 @@ function GraphicsGalleryModal({
       document.body.classList.remove('modal-open');
     };
   }, [isOpen, onClose]);
+
+  const nextImage = () => {
+    setCurrentIndex((prev) => (prev + 1) % project.gallery.length);
+  };
+
+  const prevImage = () => {
+    setCurrentIndex((prev) => (prev - 1 + project.gallery.length) % project.gallery.length);
+  };
 
   if (!isOpen) return null;
 
@@ -497,8 +497,8 @@ function GraphicsProjectCard({ project }: { project: GraphicsProject }) {
   };
 
   const handleCardClick = () => {
-  trackProjectView(project.clientName);
-  setIsModalOpen(true);
+    trackProjectView(project.clientName);
+    setIsModalOpen(true);
   };
 
   return (
