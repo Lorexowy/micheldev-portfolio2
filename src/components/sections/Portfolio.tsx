@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, ChevronDown, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import { createPortal } from 'react-dom';
 
 // Typy danych
 interface GalleryItem {
@@ -198,8 +199,20 @@ function GraphicsGalleryModal({
     }
   }, [isOpen]);
 
-  // Obsługa klawiszy
+  // Obsługa klawiszy i blokowanie przewijania
   useEffect(() => {
+    if (isOpen) {
+      // Blokuj przewijanie tła
+      document.body.style.overflow = 'hidden';
+      // Dodaj klasę do body żeby móc stylować inne elementy
+      document.body.classList.add('modal-open');
+    } else {
+      // Przywróć przewijanie
+      document.body.style.overflow = 'unset';
+      // Usuń klasę
+      document.body.classList.remove('modal-open');
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
       
@@ -208,23 +221,32 @@ function GraphicsGalleryModal({
           onClose();
           break;
         case 'ArrowLeft':
+          e.preventDefault();
           prevImage();
           break;
         case 'ArrowRight':
+          e.preventDefault();
           nextImage();
           break;
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose, nextImage, prevImage]);
+    
+    // Cleanup
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   const currentItem = project.gallery[currentIndex];
 
-  return (
+  // Renderuj modal przez portal bezpośrednio do body
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -232,7 +254,17 @@ function GraphicsGalleryModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          style={{ 
+            zIndex: 2147483647, // Maksymalny możliwy z-index
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh'
+          }}
           onClick={onClose}
         >
           <motion.div
@@ -240,7 +272,8 @@ function GraphicsGalleryModal({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="relative max-w-4xl max-h-[90vh] w-full mx-4 bg-white dark:bg-zinc-900 rounded-xl overflow-hidden"
+            className="relative max-w-4xl max-h-[90vh] w-full mx-4 bg-white dark:bg-zinc-900 rounded-xl overflow-hidden shadow-2xl"
+            style={{ zIndex: 2147483647 }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -333,7 +366,8 @@ function GraphicsGalleryModal({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 
