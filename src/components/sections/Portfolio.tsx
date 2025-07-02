@@ -8,41 +8,41 @@ import { ExternalLink, ChevronDown } from 'lucide-react';
 const PORTFOLIO_PROJECTS = [
   {
     id: 1,
-    title: 'Restauracja Bella Vista',
-    description: 'Elegancka strona dla ekskluzywnej restauracji z systemem rezerwacji online',
-    image: '/images/portfolio/restaurant.jpg',
+    title: 'Voyager - Polska Galanteria Skórzana',
+    description: 'Galeria producenta galanterii skórzanej Voyager.',
+    image: '/images/websites/voyagersopelweb.webp',
     category: 'websites',
-    url: 'https://bellavista-restaurant.com'
+    url: 'https://voyagersopel.pl/'
   },
   {
     id: 2,
-    title: 'Studio Fotograficzne',
-    description: 'Minimalistyczna strona portfolio dla fotografa ślubnego',
-    image: '/images/portfolio/photography.jpg',
+    title: 'VGEO - Profesjonalne Usługi Geodezyjne',
+    description: 'Strona internetowa firmy geodezyjnej VGEO.',
+    image: '/images/websites/vgeoweb.webp',
     category: 'websites',
-    url: 'https://studio-photo.com'
+    url: 'http://vgeo.pl/'
   },
   {
     id: 3,
-    title: 'Firma Prawnicza',
-    description: 'Profesjonalna strona kancelarii prawnej z blogiem',
-    image: '/images/portfolio/law-firm.jpg',
+    title: 'Nitką i Szydełkiem - Rękodzieło Szydełkowe',
+    description: 'Galeria rękodzieła szydełkowego Nitką i Szydełkiem.',
+    image: '/images/websites/nitkaiszydelkiemweb.webp',
     category: 'websites',
-    url: 'https://prawnik-warszawa.com'
+    url: 'https://nitkaiszydelkiem.pl/'
   },
   {
     id: 4,
     title: 'E-commerce Fashion',
     description: 'Sklep internetowy z ubraniami i systemem płatności',
-    image: '/images/portfolio/ecommerce.jpg',
-    category: 'websites',
-    url: 'https://fashion-store.com'
+    image: '/images/websites/ecommerce.webp',
+    category: 'graphics',
+    url: null
   },
   {
     id: 5,
     title: 'Logo TechStart',
     description: 'Nowoczesne logo dla startupu technologicznego',
-    image: '/images/portfolio/logo-techstart.jpg',
+    image: '/images/graphics/logo-techstart.webp',
     category: 'graphics',
     url: null
   },
@@ -50,7 +50,7 @@ const PORTFOLIO_PROJECTS = [
     id: 6,
     title: 'Branding Kawiarni',
     description: 'Kompletna identyfikacja wizualna dla lokalnej kawiarni',
-    image: '/images/portfolio/cafe-branding.jpg',
+    image: '/images/graphics/cafe-branding.webp',
     category: 'graphics',
     url: null
   }
@@ -62,7 +62,39 @@ const TABS = [
   { id: 'graphics', label: 'Grafika', count: PORTFOLIO_PROJECTS.filter(p => p.category === 'graphics').length }
 ];
 
-// Placeholder component for missing images
+// Image component with fallback
+function ProjectImage({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  if (imageError) {
+    // Fallback to placeholder if image fails to load
+    return <ProjectImagePlaceholder title={project.title} category={project.category} />;
+  }
+
+  return (
+    <div className="relative w-full h-full">
+      {/* Loading placeholder */}
+      {!imageLoaded && (
+        <div className="absolute inset-0 bg-gray-200 dark:bg-zinc-700 animate-pulse" />
+      )}
+      
+      {/* Actual image */}
+      <img
+        src={project.image}
+        alt={project.title}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
+          imageLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        onLoad={() => setImageLoaded(true)}
+        onError={() => setImageError(true)}
+        loading="lazy"
+      />
+    </div>
+  );
+}
+
+// Placeholder component for missing images (fallback)
 function ProjectImagePlaceholder({ title, category }: { title: string; category: string }) {
   const bgColor = category === 'websites' ? 'from-blue-500 to-purple-600' : 'from-green-500 to-teal-600';
   
@@ -147,7 +179,7 @@ function ProjectCard({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
 
       {/* Image Container */}
       <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-gray-100 dark:bg-zinc-800">
-        <ProjectImagePlaceholder title={project.title} category={project.category} />
+        <ProjectImage project={project} />
       </div>
 
       {/* Content */}
