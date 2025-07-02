@@ -2,10 +2,41 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, ChevronDown } from 'lucide-react';
+import { ExternalLink, ChevronDown, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// Przykładowe dane projektów
-const PORTFOLIO_PROJECTS = [
+// Typy danych
+interface GalleryItem {
+  type: 'logo' | 'business-card' | 'social' | 'poster' | 'branding' | 'other';
+  image: string;
+  title: string;
+  description?: string;
+}
+
+interface GraphicsProject {
+  id: number;
+  clientName: string;
+  mainTitle: string;
+  description: string;
+  mainImage: string;
+  services: string[];
+  gallery: GalleryItem[];
+  year: string;
+  category: 'graphics';
+}
+
+interface WebsiteProject {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  category: 'websites';
+  url: string;
+}
+
+type Project = WebsiteProject | GraphicsProject;
+
+// Dane projektów
+const WEBSITE_PROJECTS: WebsiteProject[] = [
   {
     id: 1,
     title: 'Voyager - Polska Galanteria Skórzana',
@@ -29,60 +60,113 @@ const PORTFOLIO_PROJECTS = [
     image: '/images/websites/nitkaiszydelkiemweb.webp',
     category: 'websites',
     url: 'https://nitkaiszydelkiem.pl/'
-  },
-  {
-    id: 4,
-    title: 'E-commerce Fashion',
-    description: 'Sklep internetowy z ubraniami i systemem płatności',
-    image: '/images/websites/ecommerce.webp',
-    category: 'graphics',
-    url: null
-  },
-  {
-    id: 5,
-    title: 'Logo TechStart',
-    description: 'Nowoczesne logo dla startupu technologicznego',
-    image: '/images/graphics/logo-techstart.webp',
-    category: 'graphics',
-    url: null
-  },
-  {
-    id: 6,
-    title: 'Branding Kawiarni',
-    description: 'Kompletna identyfikacja wizualna dla lokalnej kawiarni',
-    image: '/images/graphics/cafe-branding.webp',
-    category: 'graphics',
-    url: null
   }
 ];
 
-const TABS = [
-  { id: 'all', label: 'Wszystkie', count: PORTFOLIO_PROJECTS.length },
-  { id: 'websites', label: 'Strony internetowe', count: PORTFOLIO_PROJECTS.filter(p => p.category === 'websites').length },
-  { id: 'graphics', label: 'Grafika', count: PORTFOLIO_PROJECTS.filter(p => p.category === 'graphics').length }
+const GRAPHICS_PROJECTS: GraphicsProject[] = [
+  {
+    id: 4,
+    clientName: 'Voyager - Polska Galanteria Skórzana',
+    mainTitle: 'Projekt logo, wizytówek i metek dla produktów Voyager',
+    description: 'Stworzenie nowoczesnego logo, wizytówek i metek dla marki Voyager, specjalizującej się w galanterii skórzanej.',
+    mainImage: '/images/graphics/techstart-main.webp',
+    services: ['Logo', 'Wizytówki', 'Social Media'],
+    gallery: [
+      {
+        type: 'logo',
+        image: '/images/graphics/techstart-logo.webp',
+        title: 'Logo TechStart',
+        description: 'Nowoczesne logo z symbolem innowacji'
+      },
+      {
+        type: 'business-card',
+        image: '/images/graphics/techstart-card.webp',
+        title: 'Wizytówki',
+        description: 'Eleganckie wizytówki z embossowanym logo'
+      },
+      {
+        type: 'social',
+        image: '/images/graphics/techstart-social.webp',
+        title: 'Social Media Templates',
+        description: 'Szablony do mediów społecznościowych'
+      }
+    ],
+    year: '2025',
+    category: 'graphics'
+  },
+  {
+    id: 5,
+    clientName: 'Nitką i Szydełkiem - Rękodzieło Szydełkowe',
+    mainTitle: 'Projekt logo i wizytówek dla Nitką i Szydełkiem',
+    description: 'Stworzenie logo i wizytówek dla marki Nitką i Szydełkiem, specjalizującej się w rękodziele szydełkowym.',
+    mainImage: '/images/graphics/aromat-main.webp',
+    services: ['Logo', 'Wizytówki', 'Menu', 'Plakaty'],
+    gallery: [
+      {
+        type: 'logo',
+        image: '/images/graphics/aromat-logo.webp',
+        title: 'Logo Kawiarnia Aromat',
+        description: 'Logo nawiązujące do aromatu kawy'
+      },
+      {
+        type: 'business-card',
+        image: '/images/graphics/aromat-card.webp',
+        title: 'Wizytówki',
+        description: 'Wizytówki z motywem ziaren kawy'
+      },
+      {
+        type: 'other',
+        image: '/images/graphics/aromat-menu.webp',
+        title: 'Menu',
+        description: 'Stylowe menu z brandingiem kawiarni'
+      },
+      {
+        type: 'poster',
+        image: '/images/graphics/aromat-poster.webp',
+        title: 'Plakaty promocyjne',
+        description: 'Plakaty reklamowe z ofertą kawiarni'
+      }
+    ],
+    year: '2024',
+    category: 'graphics'
+  }
 ];
 
-// Image component with fallback
-function ProjectImage({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
+// Połączenie wszystkich projektów
+const ALL_PROJECTS: Project[] = [...WEBSITE_PROJECTS, ...GRAPHICS_PROJECTS];
+
+const TABS = [
+  { id: 'all', label: 'Wszystkie', count: ALL_PROJECTS.length },
+  { id: 'websites', label: 'Strony internetowe', count: WEBSITE_PROJECTS.length },
+  { id: 'graphics', label: 'Grafika', count: GRAPHICS_PROJECTS.length }
+];
+
+// Komponent obrazu z fallbackiem
+function ProjectImage({ project, isMain = false }: { project: Project; isMain?: boolean }) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  const imageSrc = project.category === 'websites' 
+    ? project.image 
+    : (project as GraphicsProject).mainImage;
+
+  const title = project.category === 'websites' 
+    ? project.title 
+    : (project as GraphicsProject).clientName;
+
   if (imageError) {
-    // Fallback to placeholder if image fails to load
-    return <ProjectImagePlaceholder title={project.title} category={project.category} />;
+    return <ProjectImagePlaceholder title={title} category={project.category} />;
   }
 
   return (
     <div className="relative w-full h-full">
-      {/* Loading placeholder */}
       {!imageLoaded && (
         <div className="absolute inset-0 bg-gray-200 dark:bg-zinc-700 animate-pulse" />
       )}
       
-      {/* Actual image */}
       <img
-        src={project.image}
-        alt={project.title}
+        src={imageSrc}
+        alt={title}
         className={`w-full h-full object-cover transition-opacity duration-300 ${
           imageLoaded ? 'opacity-100' : 'opacity-0'
         }`}
@@ -94,7 +178,7 @@ function ProjectImage({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
   );
 }
 
-// Placeholder component for missing images (fallback)
+// Placeholder dla brakujących obrazów
 function ProjectImagePlaceholder({ title, category }: { title: string; category: string }) {
   const bgColor = category === 'websites' ? 'from-blue-500 to-purple-600' : 'from-green-500 to-teal-600';
   
@@ -118,18 +202,183 @@ function ProjectImagePlaceholder({ title, category }: { title: string; category:
   );
 }
 
-function ProjectCard({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
+// Modal galerii dla projektów graficznych
+function GraphicsGalleryModal({ 
+  project, 
+  isOpen, 
+  onClose 
+}: { 
+  project: GraphicsProject; 
+  isOpen: boolean; 
+  onClose: () => void; 
+}) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextImage = () => {
+    setCurrentIndex((prev) => (prev + 1) % project.gallery.length);
+  };
+
+  const prevImage = () => {
+    setCurrentIndex((prev) => (prev - 1 + project.gallery.length) % project.gallery.length);
+  };
+
+  const goToImage = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  // Resetuj index przy otwieraniu modala
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(0);
+    }
+  }, [isOpen]);
+
+  // Obsługa klawiszy
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      switch (e.key) {
+        case 'Escape':
+          onClose();
+          break;
+        case 'ArrowLeft':
+          prevImage();
+          break;
+        case 'ArrowRight':
+          nextImage();
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const currentItem = project.gallery[currentIndex];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="relative max-w-4xl max-h-[90vh] w-full mx-4 bg-white dark:bg-zinc-900 rounded-xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-zinc-700">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {project.clientName}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {project.mainTitle}
+                </p>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              </button>
+            </div>
+
+            {/* Main Image */}
+            <div className="relative bg-gray-50 dark:bg-zinc-800">
+              <div className="aspect-video max-h-96 flex items-center justify-center">
+                <img
+                  src={currentItem.image}
+                  alt={currentItem.title}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+
+              {/* Navigation Arrows */}
+              {project.gallery.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Image Info */}
+            <div className="p-4 border-b border-gray-200 dark:border-zinc-700">
+              <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+                {currentItem.title}
+              </h4>
+              {currentItem.description && (
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {currentItem.description}
+                </p>
+              )}
+            </div>
+
+            {/* Thumbnails */}
+            {project.gallery.length > 1 && (
+              <div className="p-4">
+                <div className="flex space-x-2 overflow-x-auto">
+                  {project.gallery.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToImage(index)}
+                      className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                        index === currentIndex
+                          ? 'border-blue-500 ring-2 ring-blue-500/20'
+                          : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600'
+                      }`}
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Karta projektu strony internetowej
+function WebsiteProjectCard({ project }: { project: WebsiteProject }) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Fix hydration issue
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Only track mouse on devices that support hover
     if (window.matchMedia('(hover: hover)').matches) {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -139,7 +388,6 @@ function ProjectCard({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
   };
 
   const handleMouseEnter = () => {
-    // Only enable hover on devices that support hover
     if (window.matchMedia('(hover: hover)').matches) {
       setIsHovered(true);
     }
@@ -179,7 +427,7 @@ function ProjectCard({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
 
       {/* Image Container */}
       <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-gray-100 dark:bg-zinc-800">
-        <ProjectImage project={project} />
+        <ProjectImage project={project} isMain />
       </div>
 
       {/* Content */}
@@ -191,31 +439,174 @@ function ProjectCard({ project }: { project: typeof PORTFOLIO_PROJECTS[0] }) {
           {project.description}
         </p>
         
-        {/* Action Button - only for websites */}
-        {project.category === 'websites' && project.url && (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => window.open(project.url, '_blank')}
-            className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors duration-200 self-start"
-          >
-            <span>Zobacz stronę</span>
-            <ExternalLink className="w-4 h-4" />
-          </motion.button>
-        )}
+        {/* Action Button */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => window.open(project.url, '_blank')}
+          className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors duration-200 self-start"
+        >
+          <span>Zobacz stronę</span>
+          <ExternalLink className="w-4 h-4" />
+        </motion.button>
       </div>
     </motion.div>
   );
 }
 
+// Karta projektu graficznego
+function GraphicsProjectCard({ project }: { project: GraphicsProject }) {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (window.matchMedia('(hover: hover)').matches) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setMousePosition({ x, y });
+    }
+  };
+
+  const handleMouseEnter = () => {
+    if (window.matchMedia('(hover: hover)').matches) {
+      setIsHovered(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const handleCardClick = () => {
+    setIsModalOpen(true);
+  };
+
+  return (
+    <>
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.4 }}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleCardClick}
+        className="group relative bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 overflow-hidden hover:border-gray-300 dark:hover:border-zinc-700 transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/20 dark:hover:shadow-zinc-900/20 h-full cursor-pointer"
+      >
+        {/* Border Highlight */}
+        {mounted && isHovered && (
+          <div
+            className="absolute inset-0 rounded-xl pointer-events-none transition-all duration-500 ease-out"
+            style={{
+              background: `radial-gradient(1000px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.8), transparent 25%)`,
+              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+              maskComposite: 'xor',
+              WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+              WebkitMaskComposite: 'xor',
+              padding: '2px',
+              borderRadius: '0.75rem',
+            }}
+          />
+        )}
+
+        {/* Image Container */}
+        <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-gray-100 dark:bg-zinc-800">
+          <ProjectImage project={project} isMain />
+        </div>
+
+        {/* Content */}
+        <div className="p-4 sm:p-5">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+              {project.clientName}
+            </h3>
+            <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-zinc-800 px-2 py-1 rounded-full">
+              {project.year}
+            </span>
+          </div>
+
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {project.mainTitle}
+          </p>
+          
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed line-clamp-2">
+            {project.description}
+          </p>
+
+          {/* Services */}
+          <div className="flex flex-wrap gap-1 mb-4">
+            {project.services.map((service, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full"
+              >
+                {service}
+              </span>
+            ))}
+          </div>
+
+          {/* Thumbnails */}
+          <div className="flex space-x-1 overflow-x-auto">
+            {project.gallery.slice(0, 4).map((item, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+            {project.gallery.length > 4 && (
+              <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 flex items-center justify-center">
+                <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                  +{project.gallery.length - 4}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Gallery Button */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full mt-4 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200 text-sm"
+          >
+            Zobacz galerię ({project.gallery.length})
+          </motion.button>
+        </div>
+      </motion.div>
+
+      {/* Modal */}
+      <GraphicsGalleryModal
+        project={project}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
+  );
+}
+
+// Główny komponent
 export function Portfolio() {
   const [activeTab, setActiveTab] = useState('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState<Record<string, number>>({
-    all: 3,
-    websites: 3,
-    graphics: 3
+    all: 6,
+    websites: 6,
+    graphics: 6
   });
 
   const ITEMS_PER_LOAD = 3;
@@ -234,8 +625,8 @@ export function Portfolio() {
 
   // Filter projects based on active tab
   const allFilteredProjects = activeTab === 'all' 
-    ? PORTFOLIO_PROJECTS 
-    : PORTFOLIO_PROJECTS.filter(project => project.category === activeTab);
+    ? ALL_PROJECTS 
+    : ALL_PROJECTS.filter(project => project.category === activeTab);
 
   // Get currently visible projects
   const visibleProjects = allFilteredProjects.slice(0, visibleCount[activeTab]);
@@ -255,11 +646,7 @@ export function Portfolio() {
   // Reset visible count when changing tabs
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
-    setIsDropdownOpen(false); // Close dropdown when selecting
-    if (visibleCount[tabId] === 3) {
-      // If we haven't loaded more in this tab, keep it at 3
-      return;
-    }
+    setIsDropdownOpen(false);
   };
 
   const activeTabData = TABS.find(tab => tab.id === activeTab);
@@ -290,7 +677,7 @@ export function Portfolio() {
             Moje Projekty
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-            Sprawdź moje ostatnie realizacje w różnych kategoriach. Od stron internetowych po grafikę, znajdziesz tu różnorodne projekty graficzne, które pokazują moje umiejętności i kreatywność.
+            Sprawdź moje ostatnie realizacje w różnych kategoriach. Od stron internetowych po grafikę, znajdziesz tu różnorodne projekty, które pokazują moje umiejętności i kreatywność.
           </p>
         </motion.div>
 
@@ -411,7 +798,11 @@ export function Portfolio() {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
-                  <ProjectCard project={project} />
+                  {project.category === 'websites' ? (
+                    <WebsiteProjectCard project={project as WebsiteProject} />
+                  ) : (
+                    <GraphicsProjectCard project={project as GraphicsProject} />
+                  )}
                 </motion.div>
               ))}
             </motion.div>
@@ -419,7 +810,7 @@ export function Portfolio() {
         </motion.div>
 
         {/* Load More Button */}
-        {totalProjects > 3 && (
+        {totalProjects > 6 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
