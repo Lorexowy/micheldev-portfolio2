@@ -69,65 +69,29 @@ const GRAPHICS_PROJECTS: GraphicsProject[] = [
     clientName: 'Voyager - Polska Galanteria Skórzana',
     mainTitle: 'Projekt logo, wizytówek i metek dla produktów Voyager',
     description: 'Stworzenie nowoczesnego logo, wizytówek i metek dla marki Voyager, specjalizującej się w galanterii skórzanej.',
-    mainImage: '/images/graphics/techstart-main.webp',
+    mainImage: '/images/graphic/podglad_wizytowki_1.webp',
     services: ['Logo', 'Wizytówki', 'Social Media'],
     gallery: [
       {
         type: 'logo',
-        image: '/images/graphics/techstart-logo.webp',
+        image: '/images/graphic/podglad_wizytowki_1.webp',
         title: 'Logo TechStart',
         description: 'Nowoczesne logo z symbolem innowacji'
       },
       {
         type: 'business-card',
-        image: '/images/graphics/techstart-card.webp',
+        image: '/images/graphic/podglad_wizytowki_2.webp',
         title: 'Wizytówki',
         description: 'Eleganckie wizytówki z embossowanym logo'
       },
       {
         type: 'social',
-        image: '/images/graphics/techstart-social.webp',
+        image: '/images/graphic/voyager_logo.webp',
         title: 'Social Media Templates',
         description: 'Szablony do mediów społecznościowych'
       }
     ],
     year: '2025',
-    category: 'graphics'
-  },
-  {
-    id: 5,
-    clientName: 'Nitką i Szydełkiem - Rękodzieło Szydełkowe',
-    mainTitle: 'Projekt logo i wizytówek dla Nitką i Szydełkiem',
-    description: 'Stworzenie logo i wizytówek dla marki Nitką i Szydełkiem, specjalizującej się w rękodziele szydełkowym.',
-    mainImage: '/images/graphics/aromat-main.webp',
-    services: ['Logo', 'Wizytówki', 'Menu', 'Plakaty'],
-    gallery: [
-      {
-        type: 'logo',
-        image: '/images/graphics/aromat-logo.webp',
-        title: 'Logo Kawiarnia Aromat',
-        description: 'Logo nawiązujące do aromatu kawy'
-      },
-      {
-        type: 'business-card',
-        image: '/images/graphics/aromat-card.webp',
-        title: 'Wizytówki',
-        description: 'Wizytówki z motywem ziaren kawy'
-      },
-      {
-        type: 'other',
-        image: '/images/graphics/aromat-menu.webp',
-        title: 'Menu',
-        description: 'Stylowe menu z brandingiem kawiarni'
-      },
-      {
-        type: 'poster',
-        image: '/images/graphics/aromat-poster.webp',
-        title: 'Plakaty promocyjne',
-        description: 'Plakaty reklamowe z ofertą kawiarni'
-      }
-    ],
-    year: '2024',
     category: 'graphics'
   }
 ];
