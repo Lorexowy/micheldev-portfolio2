@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, ChevronDown, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 
 // Typy danych
 interface GalleryItem {
@@ -106,7 +107,7 @@ const TABS = [
 ];
 
 // Komponent obrazu z fallbackiem
-function ProjectImage({ project, isMain = false }: { project: Project; isMain?: boolean }) {
+function ProjectImage({ project }: { project: Project }) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -128,15 +129,15 @@ function ProjectImage({ project, isMain = false }: { project: Project; isMain?: 
         <div className="absolute inset-0 bg-gray-200 dark:bg-zinc-700 animate-pulse" />
       )}
       
-      <img
+      <Image
         src={imageSrc}
         alt={title}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${
+        fill
+        className={`object-cover transition-opacity duration-300 ${
           imageLoaded ? 'opacity-100' : 'opacity-0'
         }`}
         onLoad={() => setImageLoaded(true)}
         onError={() => setImageError(true)}
-        loading="lazy"
       />
     </div>
   );
@@ -217,7 +218,7 @@ function GraphicsGalleryModal({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, onClose, nextImage, prevImage]);
 
   if (!isOpen) return null;
 
@@ -263,9 +264,11 @@ function GraphicsGalleryModal({
             {/* Main Image */}
             <div className="relative bg-gray-50 dark:bg-zinc-800 min-h-96">
               <div className="absolute inset-0 flex items-center justify-center p-6">
-                <img
+                <Image
                   src={currentItem.image}
                   alt={currentItem.title}
+                  width={800}
+                  height={600}
                   className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                 />
               </div>
@@ -315,9 +318,11 @@ function GraphicsGalleryModal({
                           : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600'
                       }`}
                     >
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.title}
+                        width={64}
+                        height={64}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -391,7 +396,7 @@ function WebsiteProjectCard({ project }: { project: WebsiteProject }) {
 
       {/* Image Container */}
       <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-gray-100 dark:bg-zinc-800">
-        <ProjectImage project={project} isMain />
+        <ProjectImage project={project} />
       </div>
 
       {/* Content */}
@@ -484,7 +489,7 @@ function GraphicsProjectCard({ project }: { project: GraphicsProject }) {
 
         {/* Image Container */}
         <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-gray-100 dark:bg-zinc-800">
-          <ProjectImage project={project} isMain />
+          <ProjectImage project={project} />
         </div>
 
         {/* Content */}
@@ -525,9 +530,11 @@ function GraphicsProjectCard({ project }: { project: GraphicsProject }) {
                 key={index}
                 className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700"
               >
-                <img
+                <Image
                   src={item.image}
                   alt={item.title}
+                  width={48}
+                  height={48}
                   className="w-full h-full object-cover"
                 />
               </div>
