@@ -297,13 +297,18 @@ function GraphicsGalleryModal({
             {/* Main Image */}
             <div className="relative bg-gray-50 dark:bg-zinc-800 min-h-96">
               <div className="absolute inset-0 flex items-center justify-center p-6">
-                <Image
-                  src={currentItem.image}
-                  alt={currentItem.title}
-                  width={800}
-                  height={600}
-                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                />
+                <div className="relative max-w-full max-h-full w-full h-full flex items-center justify-center">
+                  <Image
+                    src={currentItem.image}
+                    alt={currentItem.title}
+                    width={800}
+                    height={600}
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                    style={{
+                      filter: 'drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1)) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05))',
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Navigation Arrows */}
@@ -311,13 +316,13 @@ function GraphicsGalleryModal({
                 <>
                   <button
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors z-10"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors z-10"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
