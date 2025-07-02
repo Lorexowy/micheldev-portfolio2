@@ -261,12 +261,12 @@ function GraphicsGalleryModal({
             </div>
 
             {/* Main Image */}
-            <div className="relative bg-gray-50 dark:bg-zinc-800">
-              <div className="aspect-video max-h-96 flex items-center justify-center">
+            <div className="relative bg-gray-50 dark:bg-zinc-800 min-h-96">
+              <div className="absolute inset-0 flex items-center justify-center p-6">
                 <img
                   src={currentItem.image}
                   alt={currentItem.title}
-                  className="max-w-full max-h-full object-contain"
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                 />
               </div>
 
