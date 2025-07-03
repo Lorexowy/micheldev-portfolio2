@@ -1,6 +1,8 @@
+// src/app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
+import { CookieProvider } from '@/components/cookies';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -48,7 +50,7 @@ export default function RootLayout({
           }}
         />
 
-        {/* NOWE: Google Analytics 4 */}
+        {/* ZMODYFIKOWANE: Google Analytics 4 z Consent Mode v2 */}
         <Script
           strategy="afterInteractive"
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
@@ -60,6 +62,16 @@ export default function RootLayout({
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
+              
+              // WAŻNE: Ustaw domyślne consent przed config
+              gtag('consent', 'default', {
+                'analytics_storage': 'denied',
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'wait_for_update': 500
+              });
+              
               gtag('js', new Date());
               gtag('config', '${GA_TRACKING_ID}', {
                 page_path: window.location.pathname,
@@ -69,7 +81,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-        {children}
+        <CookieProvider>
+          {children}
+        </CookieProvider>
       </body>
     </html>
   );

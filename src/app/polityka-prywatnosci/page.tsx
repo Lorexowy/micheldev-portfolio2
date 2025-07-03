@@ -125,21 +125,132 @@ export default function PrivacyPolicy() {
               </p>
             </section>
 
-            <section className="mb-8">
+            <section className="mb-8" id="cookies">
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-                7. Cookies (ciasteczka)
+                7. Pliki cookies i technologie śledzące
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Nasza strona wykorzystuje pliki cookies w następujących celach:
-              </p>
-              <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-4">
-                <li><strong>Niezbędne:</strong> zapewnienie podstawowych funkcji strony</li>
-                <li><strong>Analityczne:</strong> Google Analytics do analizy ruchu na stronie</li>
-                <li><strong>Preferencje:</strong> zapamiętanie ustawień motywu (jasny/ciemny)</li>
-              </ul>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Możesz zarządzać cookies w ustawieniach swojej przeglądarki. Wyłączenie niektórych cookies może wpłynąć na funkcjonalność strony.
-              </p>
+              
+              <div className="space-y-4">
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                  Czym są pliki cookies?
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Pliki cookies to małe pliki tekstowe przechowywane na Twoim urządzeniu podczas przeglądania strony internetowej. 
+                  Zawierają informacje, które pomagają nam zapewnić lepsze doświadczenie użytkownika.
+                </p>
+
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                  Rodzaje stosowanych plików cookies
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="border-l-4 border-blue-500 pl-4">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                      Cookies niezbędne (zawsze aktywne)
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                      <strong>Podstawa prawna:</strong> Art. 6 ust. 1 lit. f RODO (uzasadniony interes administratora)
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                      <strong>Cel:</strong> Zapewnienie podstawowych funkcji strony internetowej
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                      <strong>Okres przechowywania:</strong> Sesja lub do 1 roku
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 text-sm space-y-1">
+                      <li>Zapamiętanie wybranego motywu (jasny/ciemny)</li>
+                      <li>Przechowywanie ustawień cookies i preferencji użytkownika</li>
+                      <li>Obsługa formularzy kontaktowych i zapobieganie spam</li>
+                      <li>Bezpieczeństwo sesji i ochrona przed atakami</li>
+                    </ul>
+                  </div>
+
+                  <div className="border-l-4 border-green-500 pl-4">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                      Cookies analityczne (wymagają zgody)
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                      <strong>Podstawa prawna:</strong> Art. 6 ust. 1 lit. a RODO (zgoda)
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                      <strong>Cel:</strong> Analiza ruchu, optymalizacja treści i poprawa doświadczenia użytkownika
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                      <strong>Okres przechowywania:</strong> Do 26 miesięcy
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                      <strong>Zewnętrzny dostawca:</strong> Google Analytics (Google LLC, USA)
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 text-sm space-y-1">
+                      <li>Analiza ruchu i zachowań użytkowników na stronie</li>
+                      <li>Statystyki odwiedzin i najpopularniejsze treści</li>
+                      <li>Dane demograficzne w formie zagregowanej</li>
+                      <li>Optymalizacja wydajności strony</li>
+                      <li>Identyfikacja problemów technicznych</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                  Google Analytics i przekazywanie danych do USA
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Korzystamy z Google Analytics świadczonego przez Google LLC z siedzibą w USA. 
+                  Dane mogą być przekazywane i przetwarzane w Stanach Zjednoczonych na podstawie:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-4">
+                  <li>Decyzji o adekwatności Komisji Europejskiej dla programu EU-US Data Privacy Framework</li>
+                  <li>Standardowych klauzul umownych zatwierdzonych przez Komisję Europejską</li>
+                  <li>Certyfikacji Google w ramach EU-US Data Privacy Framework</li>
+                </ul>
+
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                  Google Consent Mode v2
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Nasza strona wykorzystuje Google Consent Mode v2, co oznacza, że:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-4">
+                  <li>Bez Twojej zgody Google Analytics nie zbiera żadnych danych osobowych</li>
+                  <li>Kod uruchamia się w trybie prywatnym, bez zapisywania cookies</li>
+                  <li>Po udzieleniu zgody rozpoczyna się normalne zbieranie danych</li>
+                  <li>Po wycofaniu zgody dane przestają być zbierane, a cookies są usuwane</li>
+                </ul>
+
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                  Zarządzanie plikami cookies
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Możesz zarządzać swoimi preferencjami dotyczącymi plików cookies:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-4">
+                  <li>Za pomocą banera cookies wyświetlanego przy pierwszej wizycie</li>
+                  <li>Klikając link "Ustawienia cookies" w stopce strony</li>
+                  <li>Poprzez ustawienia Twojej przeglądarki internetowej</li>
+                  <li>Kontaktując się z nami bezpośrednio</li>
+                </ul>
+
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                  Wycofanie zgody
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Możesz w każdej chwili wycofać zgodę na pliki cookies analityczne:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-4">
+                  <li>Wycofanie zgody nie wpływa na zgodność z prawem dotychczasowego przetwarzania</li>
+                  <li>Po wycofaniu zgody odpowiednie cookies zostaną automatycznie usunięte</li>
+                  <li>Procedura wycofania zgody jest tak samo prosta jak jej udzielenie</li>
+                  <li>Strona będzie nadal funkcjonować normalnie po wycofaniu zgody</li>
+                </ul>
+
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-6">
+                  <p className="text-blue-800 dark:text-blue-200 text-sm">
+                    <strong>Uwaga:</strong> Cookies niezbędne nie mogą być wyłączone, ponieważ są konieczne 
+                    do prawidłowego funkcjonowania strony internetowej. Nie przetwarzają one danych osobowych 
+                    w sposób umożliwiający identyfikację użytkownika.
+                  </p>
+                </div>
+              </div>
             </section>
 
             <section className="mb-8">

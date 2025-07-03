@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Share2
 } from 'lucide-react';
+import { CookieSettingsButton } from '@/components/cookies';
 
 export function Footer() {
   const scrollToContact = () => {
@@ -264,7 +265,7 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Legal Links */}
+            {/* Legal Links - ZAKTUALIZOWANA SEKCJA */}
             <div className="sm:col-span-2 lg:col-span-3">
               <h4 className="text-lg font-semibold text-white mb-6">Informacje</h4>
               <div className="flex flex-wrap gap-6">
@@ -280,6 +281,8 @@ export function Footer() {
                 <Link href="#process" className="text-gray-400 hover:text-blue-400 transition-colors duration-200 text-sm">
                   Proces współpracy
                 </Link>
+                {/* NOWY: Przycisk ustawień cookies */}
+                <CookieSettingsButton className="text-gray-400 hover:text-blue-400 transition-colors duration-200 text-sm" />
               </div>
             </div>
           </div>
