@@ -187,10 +187,10 @@ function GraphicsGalleryModal({
 
   // Resetuj index przy otwieraniu modala
   useEffect(() => {
-    if (isOpen) {
-      setCurrentIndex(0);
-    }
-  }, [isOpen]);
+  if (isOpen) {
+    setCurrentIndex(0);
+  }
+  }, [isOpen, project.gallery.length]);
 
   // Obsługa klawiszy i blokowanie przewijania
   useEffect(() => {

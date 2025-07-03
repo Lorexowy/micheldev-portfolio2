@@ -1,4 +1,3 @@
-// src/components/cookies/CookieProvider.tsx
 'use client';
 
 import { useEffect } from 'react';
@@ -7,18 +6,16 @@ import { CookieConsentBanner } from './CookieConsentBanner';
 
 export function CookieProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    // Inicjalizuj Google Consent Mode po załadowaniu strony
     const initConsent = () => {
       initializeGoogleConsent();
     };
 
-    // Jeśli gtag jest już dostępny, inicjalizuj od razu
-    if (typeof window !== 'undefined' && (window as any).gtag) {
+    // Bezpieczne sprawdzenie gtag
+    if (typeof window !== 'undefined' && 'gtag' in window && typeof window.gtag === 'function') {
       initConsent();
     } else {
-      // Jeśli nie, czekaj na załadowanie
       const checkGtag = () => {
-        if (typeof window !== 'undefined' && (window as any).gtag) {
+        if (typeof window !== 'undefined' && 'gtag' in window && typeof window.gtag === 'function') {
           initConsent();
         } else {
           setTimeout(checkGtag, 100);

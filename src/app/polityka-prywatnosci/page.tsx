@@ -225,7 +225,7 @@ export default function PrivacyPolicy() {
                 </p>
                 <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-4">
                   <li>Za pomocą banera cookies wyświetlanego przy pierwszej wizycie</li>
-                  <li>Klikając link "Ustawienia cookies" w stopce strony</li>
+                  <li>Klikając link &quot;Ustawienia cookies&quot; w stopce strony</li>
                   <li>Poprzez ustawienia Twojej przeglądarki internetowej</li>
                   <li>Kontaktując się z nami bezpośrednio</li>
                 </ul>

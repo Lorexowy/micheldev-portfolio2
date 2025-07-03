@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Shield, BarChart3, Settings, ExternalLink } from 'lucide-react';
+import { Shield, BarChart3, ExternalLink } from 'lucide-react';
 import { 
   shouldShowConsentBanner, 
   grantConsent, 
