@@ -1,8 +1,9 @@
 // src/components/sections/Services.tsx
 'use client';
 
+import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Monitor, Palette, Settings } from 'lucide-react';
+import { Monitor, Palette, Settings, ArrowRight, Check } from 'lucide-react';
 import { trackServiceClick } from '@/lib/gtag';
 
 // Dane usług
@@ -11,7 +12,9 @@ const SERVICES = [
     id: 'web-development',
     title: 'Tworzenie stron internetowych',
     icon: Monitor,
-    color: '#3b82f6', // blue
+    color: '#3b82f6',
+    gradient: 'from-blue-500 to-blue-600',
+    shadowColor: 'hover:shadow-blue-500/10',
     subtitle: 'Nowoczesne rozwiązania webowe',
     features: [
       'Responsywny design dla wszystkich urządzeń',
@@ -19,13 +22,16 @@ const SERVICES = [
       'Nowoczesne technologie (React, Next.js)',
       'Integracja z systemami CMS',
       'Bezpieczeństwo i kopie zapasowe'
-    ]
+    ],
+    pattern: 'dots'
   },
   {
     id: 'graphics', 
     title: 'Grafika komputerowa',
     icon: Palette,
-    color: '#10b981', // green
+    color: '#10b981',
+    gradient: 'from-green-500 to-emerald-600',
+    shadowColor: 'hover:shadow-green-500/10',
     subtitle: 'Kompleksowa identyfikacja wizualna',
     features: [
       'Projektowanie logo i identyfikacji wizualnej',
@@ -33,13 +39,16 @@ const SERVICES = [
       'Materiały marketingowe i reklamowe',
       'Grafiki na social media',
       'Projekty do druku i formatu digital'
-    ]
+    ],
+    pattern: 'waves'
   },
   {
     id: 'administration',
     title: 'Administracja stron',
     icon: Settings,
-    color: '#f59e0b', // amber
+    color: '#f59e0b',
+    gradient: 'from-amber-500 to-orange-600',
+    shadowColor: 'hover:shadow-amber-500/10',
     subtitle: 'Kompleksowa opieka techniczna',
     features: [
       'Regularne aktualizacje i kopie zapasowe',
@@ -48,327 +57,239 @@ const SERVICES = [
       'Wsparcie techniczne i szkolenia',
       'Dodawanie nowych funkcjonalności'
     ],
+    pattern: 'circuit'
   }
 ];
 
-function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
+// Memoizowane SVG Patterns - renderowane tylko raz
+const SVGPatterns = memo(({ pattern, color, id }: { pattern: string; color: string; id: string }) => {
+  switch (pattern) {
+    case 'dots':
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-10 dark:opacity-5 pointer-events-none" preserveAspectRatio="none">
+          <defs>
+            <pattern id={`dots-${id}`} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1" fill={color} />
+              <circle cx="10" cy="10" r="1" fill={color} />
+              <circle cx="18" cy="18" r="1" fill={color} />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#dots-${id})`} />
+        </svg>
+      );
+    case 'waves':
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-10 dark:opacity-5 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <path
+            d="M0,20 Q25,10 50,20 T100,20 L100,100 L0,100 Z"
+            fill={color}
+            opacity="0.2"
+          />
+          <path
+            d="M0,40 Q25,30 50,40 T100,40 L100,100 L0,100 Z"
+            fill={color}
+            opacity="0.15"
+          />
+          <path
+            d="M0,60 Q25,50 50,60 T100,60 L100,100 L0,100 Z"
+            fill={color}
+            opacity="0.1"
+          />
+        </svg>
+      );
+    case 'circuit':
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-10 dark:opacity-5 pointer-events-none" preserveAspectRatio="none">
+          <defs>
+            <pattern id={`circuit-${id}`} x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+              <path d="M15 0v5m0 10v5m0 10v5" stroke={color} strokeWidth="1" fill="none" />
+              <path d="M0 15h5m10 0h5m10 0h5" stroke={color} strokeWidth="1" fill="none" />
+              <circle cx="15" cy="15" r="2" fill={color} />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#circuit-${id})`} />
+        </svg>
+      );
+    default:
+      return null;
+  }
+});
+
+SVGPatterns.displayName = 'SVGPatterns';
+
+// Memoizowana karta - re-renderuje się tylko gdy zmienią się props
+const ModernServiceCard = memo(({ service, index }: { service: typeof SERVICES[0]; index: number }) => {
   const IconComponent = service.icon;
-  
-  // Funkcja obsługi kliknięcia w kartę usługi
-  const handleServiceClick = () => {
+
+  const handleClick = () => {
     trackServiceClick(service.title);
   };
-  
+
   return (
-    <div className="card" onClick={handleServiceClick}>
-      <div className="content">
-        {/* Front Side - domyślnie widoczna - SZCZEGÓŁY */}
-        <div className="front">
-          <div className="front-content">
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <IconComponent className="w-16 h-16 text-white mb-4" />
-              <h3 className="text-xl font-bold text-white leading-tight">
-                {service.title}
-              </h3>
-            </div>
-          </div>
-        </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ 
+        opacity: 1, 
+        y: 0,
+        transition: {
+          duration: 0.4,
+          delay: index * 0.08,
+          ease: "easeOut"
+        }
+      }}
+      viewport={{ once: true, margin: "-50px" }} // Wcześniejsze rozpoczęcie animacji
+      onClick={handleClick}
+      className="group relative cursor-pointer"
+    >
+      <div className={`relative h-full bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden transition-shadow transition-colors duration-200 hover:shadow-lg hover:border-gray-300 dark:hover:border-zinc-700 ${service.shadowColor}`}>
         
-        {/* Back Side - pokazuje się po hover - TYLKO ikona i tytuł */}
-        <div className="back">
-          <div className="img">
-            <div className="circle"></div>
-            <div className="circle" id="right"></div>
-            <div className="circle" id="bottom"></div>
-          </div>
-          <div className="back-content">
-            <div className="p-6 text-center h-full flex flex-col justify-center">
-              <div className="mb-4">
-                <IconComponent className="w-10 h-10 text-white mx-auto mb-2" />
-                <h3 className="text-lg font-bold text-white mb-1">{service.title}</h3>
-                <p className="text-sm text-gray-300">{service.subtitle}</p>
-              </div>
-              
-              <div className="space-y-3 mb-4">
-                {service.features.slice(0, 4).map((feature, i) => (
-                  <div key={i} className="flex items-start text-left text-sm">
-                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2 mt-2 flex-shrink-0"></div>
-                    <span className="text-gray-200">{feature}</span>
-                  </div>
-                ))}
-              </div>
+        {/* Background Pattern - z will-change dla płynności */}
+        <div className="absolute inset-0 will-change-transform">
+          <SVGPatterns pattern={service.pattern} color={service.color} id={service.id} />
+        </div>
+
+        {/* Top Accent Bar */}
+        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${service.gradient}`} />
+
+        {/* Content */}
+        <div className="relative p-8 z-10">
+          {/* Icon Container - bez animacji hover dla lepszej wydajności */}
+          <div className="mb-6">
+            <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} shadow-lg`}>
+              <IconComponent className="w-8 h-8 text-white" />
             </div>
           </div>
+
+          {/* Title & Subtitle */}
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            {service.title}
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            {service.subtitle}
+          </p>
+
+          {/* Features List - wszystkie elementy animowane razem */}
+          <motion.ul 
+            initial={{ opacity: 0 }}
+            whileInView={{ 
+              opacity: 1,
+              transition: {
+                duration: 0.3,
+                delay: index * 0.08 + 0.2,
+                ease: "easeOut"
+              }
+            }}
+            viewport={{ once: true }}
+            className="space-y-3"
+          >
+            {service.features.map((feature, idx) => (
+              <li
+                key={idx}
+                className="flex items-start space-x-3"
+              >
+                <div className={`flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-br ${service.gradient} p-1 mt-0.5`}>
+                  <Check className="w-full h-full text-white" />
+                </div>
+                <span className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                  {feature}
+                </span>
+              </li>
+            ))}
+          </motion.ul>
         </div>
+
+        {/* Corner Decoration - statyczne SVG */}
+        <svg
+          className="absolute top-0 right-0 w-24 h-24 text-gray-100 dark:text-zinc-800 opacity-50 pointer-events-none"
+          fill="currentColor"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
+          <polygon points="100,0 100,100 0,0" />
+        </svg>
+        <svg
+          className="absolute top-0 right-0 w-20 h-20 opacity-20 pointer-events-none"
+          fill={service.color}
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
+          <polygon points="100,0 100,100 0,0" />
+        </svg>
       </div>
-
-      <style jsx>{`
-        .card {
-          overflow: visible;
-          width: 380px;
-          height: 460px;
-          cursor: pointer;
-        }
-
-        .content {
-          width: 100%;
-          height: 100%;
-          transform-style: preserve-3d;
-          transition: transform 300ms;
-          box-shadow: 0px 0px 10px 1px #000000ee;
-          border-radius: 8px;
-        }
-
-        .front, .back {
-          background-color: #151515;
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
-          border-radius: 8px;
-          overflow: hidden;
-        }
-
-        /* Front - teraz ze szczegółami i gradientową ramką */
-        .front {
-          width: 100%;
-          height: 100%;
-          justify-content: center;
-          display: flex;
-          align-items: center;
-          overflow: hidden;
-        }
-
-        .front::before {
-          position: absolute;
-          content: ' ';
-          display: block;
-          width: 160px;
-          height: 160%;
-          background: linear-gradient(90deg, transparent, ${service.color || '#ff9966'}, ${service.color || '#ff9966'}, ${service.color || '#ff9966'}, ${service.color || '#ff9966'}, transparent);
-          animation: rotation_481 5000ms infinite linear;
-        }
-
-        .front-content {
-          position: absolute;
-          width: 99%;
-          height: 99%;
-          background-color: #151515;
-          border-radius: 8px;
-          color: white;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: stretch;
-        }
-
-        /* Back - teraz prosta wersja z animowanymi kółkami */
-        .back {
-          transform: rotateY(180deg);
-          color: white;
-        }
-
-        .back .back-content {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          padding: 20px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .card:hover .content {
-          transform: rotateY(180deg);
-        }
-
-        @keyframes rotation_481 {
-          0% {
-            transform: rotateZ(0deg);
-          }
-          100% {
-            transform: rotateZ(360deg);
-          }
-        }
-
-        .back-content .badge {
-          background-color: #00000055;
-          padding: 6px 12px;
-          border-radius: 15px;
-          backdrop-filter: blur(2px);
-          width: fit-content;
-          font-size: 12px;
-          font-weight: 600;
-        }
-
-        .description {
-          box-shadow: 0px 0px 10px 5px #00000088;
-          width: 100%;
-          padding: 16px;
-          background-color: #00000099;
-          backdrop-filter: blur(5px);
-          border-radius: 8px;
-        }
-
-        .title {
-          font-size: 14px;
-          max-width: 100%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .title p {
-          width: 80%;
-          margin: 0;
-          font-size: 16px;
-        }
-
-        .card-footer {
-          color: #ffffff88;
-          margin-top: 8px;
-          font-size: 12px;
-          line-height: 1.4;
-        }
-
-        .back .img {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center;
-        }
-
-        .circle {
-          width: 90px;
-          height: 90px;
-          border-radius: 50%;
-          background-color: #ffbb66;
-          position: absolute;
-          filter: blur(15px);
-          animation: floating 2600ms infinite linear;
-        }
-
-        #bottom {
-          background-color: #ff8866;
-          left: 50px;
-          top: 50px;
-          width: 150px;
-          height: 150px;
-          animation-delay: -800ms;
-        }
-
-        #right {
-          background-color: #ff2233;
-          right: 20px;
-          top: 20px;
-          width: 60px;
-          height: 60px;
-          animation-delay: -1800ms;
-        }
-
-        @keyframes floating {
-          0% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(10px);
-          }
-          100% {
-            transform: translateY(0px);
-          }
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-          .card {
-            width: 100%;
-            max-width: 380px;
-            height: 420px;
-          }
-          
-          .front-content {
-            padding: 16px !important;
-          }
-          
-          .back-content {
-            padding: 16px !important;
-          }
-          
-          .description {
-            padding: 12px !important;
-          }
-          
-          .title p {
-            font-size: 14px !important;
-          }
-          
-          .card-footer {
-            font-size: 11px !important;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .card {
-            height: 380px;
-          }
-          
-          .circle {
-            width: 70px;
-            height: 70px;
-          }
-          
-          #bottom {
-            width: 120px;
-            height: 120px;
-            left: 40px;
-            top: 40px;
-          }
-          
-          #right {
-            width: 50px;
-            height: 50px;
-            right: 15px;
-            top: 15px;
-          }
-        }
-      `}</style>
-    </div>
+    </motion.div>
   );
-}
+});
+
+ModernServiceCard.displayName = 'ModernServiceCard';
 
 export function Services() {
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section id="services" className="py-20 bg-white dark:bg-black">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="services" className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-zinc-950 dark:to-black relative overflow-hidden">
+      {/* Uproszczone tło - mniej warstw */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Moje Usługi
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Oferuję kompleksowe rozwiązania dla Twojego biznesu
+            Oferuję kompleksowe rozwiązania dla Twojego biznesu - od projektowania po wdrożenie
           </p>
         </motion.div>
 
         {/* Services Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          {SERVICES.map((service, index) => (
+            <ModernServiceCard key={service.id} service={service} index={index} />
+          ))}
+        </div>
+
+        {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center"
+          className="text-center"
         >
-          {SERVICES.map((service) => (
-            <ServiceCard key={service.id} service={service} />
-          ))}
+          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-[1px] rounded-2xl max-w-2xl mx-auto">
+            <div className="bg-white dark:bg-black rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Nie wiesz, czego potrzebujesz?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Skontaktuj się ze mną, a wspólnie znajdziemy najlepsze rozwiązanie dla Twojego biznesu
+              </p>
+              <motion.button
+                onClick={scrollToContact}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.1 }}
+                className="inline-flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-shadow duration-200"
+              >
+                <span>Darmowa konsultacja</span>
+                <ArrowRight className="w-5 h-5" />
+              </motion.button>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
